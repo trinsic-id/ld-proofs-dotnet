@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Contexts\security-v1.jsonld" />
+    <None Remove="Contexts\security-v1 %28copy%29.jsonld" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Data\security-v2.jsonld">
+      <IncludeInPackage>false</IncludeInPackage>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\security-v1.jsonld">
+      <IncludeInPackage>false</IncludeInPackage>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+</Project>
