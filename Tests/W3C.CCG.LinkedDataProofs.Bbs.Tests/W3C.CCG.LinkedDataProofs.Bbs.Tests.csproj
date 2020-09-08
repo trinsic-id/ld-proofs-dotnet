@@ -14,9 +14,8 @@
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\W3C.CCG.LinkedDataProofs.BbsSignatures\W3C.CCG.LinkedDataProofs.Bbs.csproj" />
-    <ProjectReference Include="..\Hyperledger.Ursa.BbsSignatures\Hyperledger.Ursa.Bbs.csproj" />
-    <ProjectReference Include="..\W3C.CCG.SecurityVocabulary\W3C.CCG.SecurityVocabulary.csproj" />
+    <ProjectReference Include="..\..\Library\W3C.CCG.LinkedDataProofs.Bbs\W3C.CCG.LinkedDataProofs.Bbs.csproj" />
+    <ProjectReference Include="..\..\Library\W3C.CCG.SecurityVocabulary\W3C.CCG.SecurityVocabulary.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Data\did_example_489398593_test.json">

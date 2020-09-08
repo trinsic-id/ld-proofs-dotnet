@@ -13,8 +13,14 @@ namespace BbsDataSignatures
 {
     public class BbsBlsSignature2020Suite : ILinkedDataSuite
     {
+        public BbsBlsSignature2020Suite()
+        {
+            BbsProvider = new BbsSignatureService();
+        }
 
         public IEnumerable<string> SupportedProofTypes => new[] { BbsBlsSignature2020.Name };
+
+        public BbsSignatureService BbsProvider { get; }
 
         public JToken CreateProof(CreateProofOptions options, JsonLdProcessorOptions processorOptions)
         {

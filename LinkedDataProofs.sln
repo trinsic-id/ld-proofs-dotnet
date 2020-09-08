@@ -1,27 +1,29 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{B20B1B68-6106-4DE4-8658-8E6BD8CBF552}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9A6E1806-515C-4EBC-A66A-1F8E59E87043}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "W3C.CCG.DidCore", "Library\W3C.CCG.DidCore\W3C.CCG.DidCore.csproj", "{34FEEBD2-698D-40EC-BE54-DFB95F13919D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "W3C.CCG.DidCore", "Library\W3C.CCG.DidCore\W3C.CCG.DidCore.csproj", "{34FEEBD2-698D-40EC-BE54-DFB95F13919D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "W3C.CCG.SecurityVocabulary", "Library\W3C.CCG.SecurityVocabulary\W3C.CCG.SecurityVocabulary.csproj", "{BE8BB061-F097-4C6E-BCDF-60C98E03919B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "W3C.CCG.SecurityVocabulary", "Library\W3C.CCG.SecurityVocabulary\W3C.CCG.SecurityVocabulary.csproj", "{BE8BB061-F097-4C6E-BCDF-60C98E03919B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "W3C.CCG.LinkedDataProofs", "Library\W3C.CCG.LinkedDataProofs\W3C.CCG.LinkedDataProofs.csproj", "{28F6A788-5B34-4EC9-B44A-534C3A21A9B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "W3C.CCG.LinkedDataProofs", "Library\W3C.CCG.LinkedDataProofs\W3C.CCG.LinkedDataProofs.csproj", "{28F6A788-5B34-4EC9-B44A-534C3A21A9B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "W3C.CCG.LinkedDataProofs.Bbs", "Library\W3C.CCG.LinkedDataProofs.Bbs\W3C.CCG.LinkedDataProofs.Bbs.csproj", "{03DD3C03-E797-44AB-9D27-34DDBFDE542E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "W3C.CCG.LinkedDataProofs.Bbs", "Library\W3C.CCG.LinkedDataProofs.Bbs\W3C.CCG.LinkedDataProofs.Bbs.csproj", "{03DD3C03-E797-44AB-9D27-34DDBFDE542E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "W3C.CCG.VerifiableCredentials", "Library\W3C.CCG.VerifiableCredentials\W3C.CCG.VerifiableCredentials.csproj", "{F55BD409-6640-405D-A778-EC11E04C91FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "W3C.CCG.VerifiableCredentials", "Library\W3C.CCG.VerifiableCredentials\W3C.CCG.VerifiableCredentials.csproj", "{F55BD409-6640-405D-A778-EC11E04C91FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "W3C.CCG.DidCore.Tests", "Tests\W3C.CCG.DidCore.Tests\W3C.CCG.DidCore.Tests.csproj", "{E1642291-F16F-47D6-A860-C4184FA49A5E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "W3C.CCG.DidCore.Tests", "Tests\W3C.CCG.DidCore.Tests\W3C.CCG.DidCore.Tests.csproj", "{E1642291-F16F-47D6-A860-C4184FA49A5E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "W3C.CCG.LinkedDataProofs.Bbs.Tests", "Tests\W3C.CCG.LinkedDataProofs.Bbs.Tests\W3C.CCG.LinkedDataProofs.Bbs.Tests.csproj", "{91F4CF51-BA08-4C1B-A45D-0B2D0342BB29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "W3C.CCG.LinkedDataProofs.Bbs.Tests", "Tests\W3C.CCG.LinkedDataProofs.Bbs.Tests\W3C.CCG.LinkedDataProofs.Bbs.Tests.csproj", "{91F4CF51-BA08-4C1B-A45D-0B2D0342BB29}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "W3C.CCG.DidCore.X25519", "Library\W3C.CCG.DidCore.X25519\W3C.CCG.DidCore.X25519.csproj", "{6CF9E9BB-4FD9-4185-8951-EAE894FB4696}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "W3C.CCG.DidCore.X25519", "Library\W3C.CCG.DidCore.X25519\W3C.CCG.DidCore.X25519.csproj", "{6CF9E9BB-4FD9-4185-8951-EAE894FB4696}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "W3C.CCG.AuthorizationCapabilities", "Library\W3C.CCG.AuthorizationCapabilities\W3C.CCG.AuthorizationCapabilities.csproj", "{597A1291-72E7-41A4-900E-96D98AF55A0A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,9 +33,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{34FEEBD2-698D-40EC-BE54-DFB95F13919D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -132,6 +131,21 @@ Global
 		{6CF9E9BB-4FD9-4185-8951-EAE894FB4696}.Release|x64.Build.0 = Release|Any CPU
 		{6CF9E9BB-4FD9-4185-8951-EAE894FB4696}.Release|x86.ActiveCfg = Release|Any CPU
 		{6CF9E9BB-4FD9-4185-8951-EAE894FB4696}.Release|x86.Build.0 = Release|Any CPU
+		{597A1291-72E7-41A4-900E-96D98AF55A0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{597A1291-72E7-41A4-900E-96D98AF55A0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{597A1291-72E7-41A4-900E-96D98AF55A0A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{597A1291-72E7-41A4-900E-96D98AF55A0A}.Debug|x64.Build.0 = Debug|Any CPU
+		{597A1291-72E7-41A4-900E-96D98AF55A0A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{597A1291-72E7-41A4-900E-96D98AF55A0A}.Debug|x86.Build.0 = Debug|Any CPU
+		{597A1291-72E7-41A4-900E-96D98AF55A0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{597A1291-72E7-41A4-900E-96D98AF55A0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{597A1291-72E7-41A4-900E-96D98AF55A0A}.Release|x64.ActiveCfg = Release|Any CPU
+		{597A1291-72E7-41A4-900E-96D98AF55A0A}.Release|x64.Build.0 = Release|Any CPU
+		{597A1291-72E7-41A4-900E-96D98AF55A0A}.Release|x86.ActiveCfg = Release|Any CPU
+		{597A1291-72E7-41A4-900E-96D98AF55A0A}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{34FEEBD2-698D-40EC-BE54-DFB95F13919D} = {B20B1B68-6106-4DE4-8658-8E6BD8CBF552}
@@ -142,5 +156,9 @@ Global
 		{E1642291-F16F-47D6-A860-C4184FA49A5E} = {9A6E1806-515C-4EBC-A66A-1F8E59E87043}
 		{91F4CF51-BA08-4C1B-A45D-0B2D0342BB29} = {9A6E1806-515C-4EBC-A66A-1F8E59E87043}
 		{6CF9E9BB-4FD9-4185-8951-EAE894FB4696} = {B20B1B68-6106-4DE4-8658-8E6BD8CBF552}
+		{597A1291-72E7-41A4-900E-96D98AF55A0A} = {B20B1B68-6106-4DE4-8658-8E6BD8CBF552}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F2399EDD-32F6-4824-A949-253EB92D1FA0}
 	EndGlobalSection
 EndGlobal
