@@ -1,9 +1,15 @@
 ﻿using Newtonsoft.Json.Linq;
+using W3C.CCG.SecurityVocabulary;
 
 namespace W3C.CCG.AuthorizationCapabilities
 {
     public class CapabilityAuthorization : JObject
     {
+        public CapabilityAuthorization()
+        {
+            Context = Constants.SECURITY_CONTEXT_V2_URL;
+        }
+
         public JToken Context
         {
             get => this["@context"];

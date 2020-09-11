@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 
 namespace W3C.CCG.DidCore
 {
+
     public class DidDocument : JObject
     {
         public DidDocument(JObject obj) : base(obj)

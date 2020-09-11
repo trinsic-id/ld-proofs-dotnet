@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\W3C.CCG.DidCore\W3C.CCG.DidCore.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Hyperledger.Ursa.BbsSignatures" Version="0.1.0" />
+    <PackageReference Include="Multiformats.Base" Version="2.0.2" />
+  </ItemGroup>
+</Project>

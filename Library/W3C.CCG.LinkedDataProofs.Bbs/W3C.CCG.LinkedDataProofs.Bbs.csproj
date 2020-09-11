@@ -14,6 +14,7 @@
     <PackageReference Include="Multiformats.Base" Version="2.0.2" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\W3C.CCG.DidKey\W3C.CCG.DidKey.csproj" />
     <ProjectReference Include="..\W3C.CCG.DidCore\W3C.CCG.DidCore.csproj" />
     <ProjectReference Include="..\W3C.CCG.LinkedDataProofs\W3C.CCG.LinkedDataProofs.csproj" />
     <ProjectReference Include="..\W3C.CCG.SecurityVocabulary\W3C.CCG.SecurityVocabulary.csproj" />

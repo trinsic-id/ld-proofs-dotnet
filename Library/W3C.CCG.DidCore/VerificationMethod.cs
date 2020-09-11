@@ -58,6 +58,11 @@ namespace W3C.CCG.DidCore
             throw new NotImplementedException();
         }
 
+        public virtual string GetFingerprint()
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 

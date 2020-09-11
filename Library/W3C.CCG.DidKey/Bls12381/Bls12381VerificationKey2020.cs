@@ -1,5 +1,6 @@
 ﻿using System;
 using Hyperledger.Ursa.BbsSignatures;
+using Multiformats.Base;
 using Newtonsoft.Json.Linq;
 using W3C.CCG.DidCore;
 
@@ -31,9 +32,9 @@ namespace BbsDataSignatures
             set => this["privateKeyBase58"] = value;
         }
 
-        internal BlsKeyPair ToBlsKeyPair() => new BlsKeyPair(
-            PrivateKeyBase58?.AsBytesFromBase58() ??
-            PublicKeyBase58?.AsBytesFromBase58() ??
-            throw new Exception("Cannot convert to BlsKeyPair. Either public or private key data must be present."));
+        public BlsKeyPair ToBlsKeyPair() => new BlsKeyPair(Multibase.Base58.Decode(
+            PrivateKeyBase58 ??
+            PublicKeyBase58 ??
+            throw new Exception("Cannot convert to BlsKeyPair. Either public or private key data must be present.")));
     }
 }
