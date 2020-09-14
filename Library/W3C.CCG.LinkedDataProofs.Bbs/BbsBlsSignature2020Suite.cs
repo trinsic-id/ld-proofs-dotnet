@@ -142,5 +142,23 @@ namespace BbsDataSignatures
 
             return new Bls12381VerificationKey2020(result);
         }
+
+        /// <summary>
+        /// Determines whether this instance [can create proof] the specified proof type.
+        /// </summary>
+        /// <param name="proofType">Type of the proof.</param>
+        /// <returns>
+        ///   <c>true</c> if this instance [can create proof] the specified proof type; otherwise, <c>false</c>.
+        /// </returns>
+        public bool CanCreateProof(string proofType) => proofType == BbsBlsSignature2020.Name;
+
+        /// <summary>
+        /// Determines whether this instance [can verify proof] the specified proof type.
+        /// </summary>
+        /// <param name="proofType">Type of the proof.</param>
+        /// <returns>
+        ///   <c>true</c> if this instance [can verify proof] the specified proof type; otherwise, <c>false</c>.
+        /// </returns>
+        public bool CanVerifyProof(string proofType) => proofType == BbsBlsSignature2020.Name;
     }
 }

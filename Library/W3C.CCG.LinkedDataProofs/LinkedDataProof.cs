@@ -14,7 +14,7 @@ using W3C.CCG.SecurityVocabulary;
 
 namespace W3C.CCG.LinkedDataProofs
 {
-    public abstract class LinkedDataProof : JObject
+    public class LinkedDataProof : JObject
     {
         public LinkedDataProof()
         {
@@ -77,6 +77,18 @@ namespace W3C.CCG.LinkedDataProofs
         {
             get => this["created"]?.Value<DateTimeOffset>();
             set => this["created"] = value;
+        }
+
+        public string Creator
+        {
+            get => this["creator"]?.Value<string>();
+            set => this["creator"] = value;
+        }
+
+        public string Capability
+        {
+            get => this["capability"]?.Value<string>();
+            set => this["capability"] = value;
         }
 
         public string VerificationMethod

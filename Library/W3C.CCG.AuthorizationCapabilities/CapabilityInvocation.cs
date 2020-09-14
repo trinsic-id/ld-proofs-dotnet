@@ -5,6 +5,14 @@ namespace W3C.CCG.AuthorizationCapabilities
 {
     public class CapabilityInvocation : JObject
     {
+        public CapabilityInvocation()
+        {
+        }
+
+        public CapabilityInvocation(JObject other) : base(other)
+        {
+        }
+
         public JToken Context
         {
             get => this["@context"];

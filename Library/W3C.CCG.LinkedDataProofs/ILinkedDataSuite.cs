@@ -9,6 +9,10 @@ namespace W3C.CCG.LinkedDataProofs
     {
         IEnumerable<string> SupportedProofTypes { get; }
 
+        bool CanCreateProof(string proofType);
+
+        bool CanVerifyProof(string proofType);
+
         JToken CreateProof(CreateProofOptions options, JsonLdProcessorOptions processorOptions);
 
         Task<JToken> CreateProofAsync(CreateProofOptions options, JsonLdProcessorOptions processorOptions);
