@@ -3,11 +3,15 @@ using W3C.CCG.SecurityVocabulary;
 
 namespace W3C.CCG.AuthorizationCapabilities
 {
-    public class CapabilityAuthorization : JObject
+    public class CapabilityDelegation : JObject
     {
-        public CapabilityAuthorization()
+        public CapabilityDelegation()
         {
             Context = Constants.SECURITY_CONTEXT_V2_URL;
+        }
+
+        public CapabilityDelegation(JObject obj) : base(obj)
+        {
         }
 
         public JToken Context
@@ -32,6 +36,12 @@ namespace W3C.CCG.AuthorizationCapabilities
         {
             get => this["invoker"]?.Value<string>();
             set => this["invoker"] = value;
+        }
+
+        public string Target
+        {
+            get => this["target"]?.Value<string>();
+            set => this["target"] = value;
         }
 
         public string Delegator

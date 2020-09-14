@@ -13,16 +13,16 @@ namespace W3C.CCG.DidCore
 
     public class DidResolver
     {
-        public IList<IDidDriver> Drivers { get; private set; } = new List<IDidDriver>();
+        public IList<IDidDriver> drivers = new List<IDidDriver>();
 
         public void Register(IDidDriver didDriver)
         {
-            Drivers.Add(didDriver);
+            drivers.Add(didDriver);
         }
 
         public Task<DidDocument> ResolveAsync(string didUri)
         {
-            foreach (var item in Drivers)
+            foreach (var item in drivers)
             {
                 if (item.CanResolve(didUri))
                 {
