@@ -19,14 +19,14 @@ steps:
   inputs:
     command: 'restore'
     projects: '**/*.sln'
-    feedsToUse: 'config'
+    feedsToUse: 'select'
+    vstsFeed: '929bb19b-5304-4ae9-90cb-bd43ba7e444b'
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
     projects: '**/*.sln'
     arguments: '-c Release'
-    feedsToUse: 'config'
 
 - task: DotNetCoreCLI@2
   inputs:
