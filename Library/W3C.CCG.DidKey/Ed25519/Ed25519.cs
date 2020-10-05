@@ -3,6 +3,7 @@ using Chaos.NaCl.Internal.Ed25519Ref10;
 
 namespace Chaos.NaCl
 {
+
     public static class Ed25519
     {
         public static readonly int PublicKeySizeInBytes = 32;
