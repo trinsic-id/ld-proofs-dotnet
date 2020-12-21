@@ -4,7 +4,7 @@ using BbsDataSignatures;
 using Hyperledger.Ursa.BbsSignatures;
 using Multiformats.Base;
 
-namespace BbsDataSignatures
+namespace Hyperledger.Ursa.BbsSignatures
 {
     public static class BlsKeyPairExtensions
     {

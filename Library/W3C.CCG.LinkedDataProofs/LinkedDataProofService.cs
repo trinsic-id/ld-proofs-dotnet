@@ -36,7 +36,7 @@ namespace W3C.CCG.LinkedDataProofs
             var processorOptions = new JsonLdProcessorOptions
             {
                 CompactToRelative = false,
-                DocumentLoader = documentLoader.GetDocumentLoader()
+                DocumentLoader = documentLoader.Load
             };
 
             if (options.CompactProof)
@@ -60,7 +60,7 @@ namespace W3C.CCG.LinkedDataProofs
             var processorOptions = new JsonLdProcessorOptions
             {
                 CompactToRelative = false,
-                DocumentLoader = documentLoader.GetDocumentLoader()
+                DocumentLoader = documentLoader.Load
             };
 
             var original = options.Document.DeepClone();
@@ -85,7 +85,7 @@ namespace W3C.CCG.LinkedDataProofs
             var processorOptions = new JsonLdProcessorOptions
             {
                 CompactToRelative = false,
-                DocumentLoader = documentLoader.GetDocumentLoader()
+                DocumentLoader = documentLoader.Load
             };
 
             if (proofOptions.CompactProof)

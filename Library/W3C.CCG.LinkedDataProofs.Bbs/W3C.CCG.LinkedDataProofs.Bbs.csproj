@@ -10,10 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Hyperledger.Ursa.BbsSignatures" Version="0.1.0" />
     <PackageReference Include="Multiformats.Base" Version="2.0.2" />
-    <PackageReference Include="Hyperledger.Ursa.Bbs" Version="1.0.0-1598124164" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\W3C.CCG.DidKey\W3C.CCG.DidKey.csproj" />
     <ProjectReference Include="..\W3C.CCG.DidCore\W3C.CCG.DidCore.csproj" />
     <ProjectReference Include="..\W3C.CCG.LinkedDataProofs\W3C.CCG.LinkedDataProofs.csproj" />
     <ProjectReference Include="..\W3C.CCG.SecurityVocabulary\W3C.CCG.SecurityVocabulary.csproj" />

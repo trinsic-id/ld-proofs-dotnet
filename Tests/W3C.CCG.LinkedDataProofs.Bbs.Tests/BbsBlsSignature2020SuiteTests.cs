@@ -22,16 +22,18 @@ namespace LindedDataProofs.Bbs
         public BbsBlsSignature2020SuiteTests(ServiceFixture serviceFixture)
         {
             Provider = serviceFixture.Provider;
+            BbsProvider = new BbsSignatureService();
             LdProofService = Provider.GetRequiredService<ILinkedDataProofService>();
         }
 
         public IServiceProvider Provider { get; }
+        public BbsSignatureService BbsProvider { get; }
         public ILinkedDataProofService LdProofService { get; }
 
         [Fact(DisplayName = "Sign document with BBS suite")]
         public void SignDocument()
         {
-            var keyPair = BbsSignatureService.GenerateBlsKey();
+            var keyPair = BbsProvider.GenerateBlsKey();
 
             var document = Utilities.LoadJson("Data/test_document.json");
 
@@ -50,7 +52,7 @@ namespace LindedDataProofs.Bbs
         [Fact(DisplayName = "Sign verifiable credential with BBS suite")]
         public void SignVerifiableCredential()
         {
-            var keyPair = BbsSignatureService.GenerateBlsKey();
+            var keyPair = BbsProvider.GenerateBlsKey();
 
             var document = Utilities.LoadJson("Data/test_vc.json");
 

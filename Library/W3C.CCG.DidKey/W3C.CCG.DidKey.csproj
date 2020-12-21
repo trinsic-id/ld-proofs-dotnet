@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\W3C.CCG.DidCore\W3C.CCG.DidCore.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Hyperledger.Ursa.BbsSignatures" Version="0.1.0-pre.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.8" />
+    <PackageReference Include="Multiformats.Base" Version="2.0.2" />
+  </ItemGroup>
+</Project>

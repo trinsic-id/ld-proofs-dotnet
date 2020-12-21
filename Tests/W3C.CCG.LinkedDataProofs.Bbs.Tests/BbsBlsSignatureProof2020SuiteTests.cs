@@ -14,16 +14,18 @@ namespace W3C.CCG.LinkedDataProofs.Bbs.Tests
         public BbsBlsSignatureProof2020SuiteTests(ServiceFixture serviceFixture)
         {
             Provider = serviceFixture.Provider;
+            BbsProvider = new BbsSignatureService();
             LdProofService = Provider.GetRequiredService<ILinkedDataProofService>();
         }
 
         public IServiceProvider Provider { get; }
+        public BbsSignatureService BbsProvider { get; }
         public ILinkedDataProofService LdProofService { get; }
 
         [Fact(DisplayName = "Derive proof from document revealing some")]
         public void SignDocumentRevealSome()
         {
-            var keyPair = BbsSignatureService.GenerateBlsKey();
+            var keyPair = BbsProvider.GenerateBlsKey();
 
             var document = Utilities.LoadJson("Data/test_signed_document.json");
             var proofRequest = Utilities.LoadJson("Data/test_reveal_document.json");
@@ -45,7 +47,7 @@ namespace W3C.CCG.LinkedDataProofs.Bbs.Tests
         [Fact(DisplayName = "Derive proof from document revealing all")]
         public void SignDocumentRevealAll()
         {
-            var keyPair = BbsSignatureService.GenerateBlsKey();
+            var keyPair = BbsProvider.GenerateBlsKey();
 
             var document = Utilities.LoadJson("Data/test_signed_document.json");
             var proofRequest = Utilities.LoadJson("Data/test_reveal_all_document.json");
@@ -67,7 +69,7 @@ namespace W3C.CCG.LinkedDataProofs.Bbs.Tests
         [Fact(DisplayName = "Derive proof from verifiable credential revealing all")]
         public void DeriveVerifiableCredentialRevealAll()
         {
-            var keyPair = BbsSignatureService.GenerateBlsKey();
+            var keyPair = BbsProvider.GenerateBlsKey();
 
             var document = Utilities.LoadJson("Data/test_signed_vc.json");
             var proofRequest = Utilities.LoadJson("Data/test_vc_reveal_document.json");

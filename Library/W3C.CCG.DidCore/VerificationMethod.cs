@@ -58,6 +58,16 @@ namespace W3C.CCG.DidCore
             throw new NotImplementedException();
         }
 
+        public virtual string GetFingerprint()
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual VerificationMethod GetPublicNode()
+        {
+            return new VerificationMethod((JObject)DeepClone());
+        }
+
         #endregion
     }
 
