@@ -1,13 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using VDS.RDF.JsonLd;
+using W3C.CCG.DidCore;
 
 namespace W3C.CCG.LinkedDataProofs
 {
     internal class CustomDocumentLoader : IDocumentLoader
     {
         public Dictionary<Uri, RemoteDocument> Documents = new Dictionary<Uri, RemoteDocument>();
+        private readonly IEnumerable<IDidDriver> didDrivers;
+
+        public CustomDocumentLoader(IEnumerable<IDidDriver> didDrivers)
+        {
+            this.didDrivers = didDrivers;
+        }
 
         public IDocumentLoader AddCached(string uri, JObject document)
         {
@@ -16,18 +24,28 @@ namespace W3C.CCG.LinkedDataProofs
             return this;
         }
 
-        public Func<Uri, JsonLdLoaderOptions, RemoteDocument> GetDocumentLoader()
+        public RemoteDocument Load(Uri uri, JsonLdLoaderOptions options)
         {
-            return (uri, options) =>
+            foreach (var item in didDrivers)
             {
-                if (Documents.TryGetValue(uri, out var document))
+                if (item.CanResolve(uri))
                 {
-                    return document;
+                    var didDocument = item.Resolve(uri);
+                    return new RemoteDocument { Document = didDocument };
                 }
-                var doc = DefaultDocumentLoader.LoadJson(uri, options);
-                Documents.TryAdd(uri, doc);
-                return doc;
-            };
+            }
+            if (Documents.TryGetValue(uri, out var document))
+            {
+                return document;
+            }
+            var doc = DefaultDocumentLoader.LoadJson(uri, options);
+            Documents.TryAdd(uri, doc);
+            return doc;
+        }
+
+        public Task<JObject> LoadAsync(string documentUri)
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -35,6 +53,8 @@ namespace W3C.CCG.LinkedDataProofs
     {
         IDocumentLoader AddCached(string uri, JObject document);
 
-        Func<Uri, JsonLdLoaderOptions, RemoteDocument> GetDocumentLoader();
+        Task<JObject> LoadAsync(string documentUri);
+
+        RemoteDocument Load(Uri uri, JsonLdLoaderOptions options);
     }
 }
