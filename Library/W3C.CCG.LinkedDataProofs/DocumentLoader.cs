@@ -7,7 +7,7 @@ using W3C.CCG.DidCore;
 
 namespace W3C.CCG.LinkedDataProofs
 {
-    internal class CustomDocumentLoader : IDocumentLoader
+    public class CustomDocumentLoader : IDocumentLoader
     {
         public Dictionary<Uri, RemoteDocument> Documents = new Dictionary<Uri, RemoteDocument>();
         private readonly IEnumerable<IDidDriver> didDrivers;

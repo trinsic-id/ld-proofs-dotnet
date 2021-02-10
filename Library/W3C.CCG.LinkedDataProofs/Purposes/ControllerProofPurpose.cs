@@ -7,12 +7,11 @@ namespace W3C.CCG.LinkedDataProofs.Purposes
 {
     public class ControllerProofPurpose : ProofPurpose
     {
-        public ControllerProofPurpose(string term, string controller) : base(term)
+        public ControllerProofPurpose(string term) : base(term)
         {
-            Controller = controller;
         }
 
-        public string Controller { get; }
+        public string Controller { get; set; }
 
         public override async Task<ValidationResult> ValidateAsync(JToken proof, ValidateOptions options)
         {

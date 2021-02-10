@@ -19,7 +19,7 @@ namespace W3C.CCG.LinkedDataProofs.Purposes
             return Task.FromResult(new ValidationResult { Valid = proof["proofPurpose"].Equals(Term) });
         }
 
-        public virtual JToken Update(JToken proof)
+        public virtual JObject Update(JObject proof)
         {
             proof["proofPurpose"] = Term;
             return proof;
@@ -30,6 +30,7 @@ namespace W3C.CCG.LinkedDataProofs.Purposes
     {
         public string Controller { get; set; }
         public bool Valid { get; set; }
+        public string Invoker { get; set; }
     }
 
     public class ValidateOptions

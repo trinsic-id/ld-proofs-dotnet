@@ -2,7 +2,7 @@
 {
     public class AssertionProofPurpose : ControllerProofPurpose
     {
-        public AssertionProofPurpose(string controller) : base("assertionMethod", controller)
+        public AssertionProofPurpose() : base("assertionMethod")
         {
         }
     }

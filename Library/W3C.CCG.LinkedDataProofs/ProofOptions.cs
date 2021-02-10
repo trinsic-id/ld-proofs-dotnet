@@ -34,6 +34,8 @@ namespace W3C.CCG.LinkedDataProofs
         public string Nonce { get; set; }
 
         public JToken ProofRequest { get; set; }
+
+        public JObject Proof { get; set; }
     }
 
     public class VerifyProofOptions

@@ -6,14 +6,16 @@ namespace W3C.CCG.AuthorizationCapabilities
 {
     public class CapabilityDelegationProofPurpose : ControllerProofPurpose
     {
-        public CapabilityDelegationProofPurpose(IEnumerable<string> capabilityChain, string controller) : base("capabilityDelegation", controller)
+        public CapabilityDelegationProofPurpose() : base("capabilityDelegation")
         {
-            CapabilityChain = capabilityChain;
         }
 
-        public IEnumerable<string> CapabilityChain { get; }
+        public PurposeOptions Options { get; set; } = new PurposeOptions();
 
-        public override JToken Update(JToken proof)
+        public IEnumerable<string> CapabilityChain { get; }
+        public JToken VerifiedParentCapability { get; internal set; }
+
+        public override JObject Update(JObject proof)
         {
             proof = base.Update(proof);
 
