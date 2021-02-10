@@ -14,7 +14,7 @@ namespace W3C.CCG.LinkedDataProofs.Purposes
 
         public string Term { get; }
 
-        public virtual Task<ValidationResult> ValidateAsync(JToken proof, ValidationRequest request)
+        public virtual Task<ValidationResult> ValidateAsync(JToken proof, ValidateOptions options)
         {
             return Task.FromResult(new ValidationResult { Valid = proof["proofPurpose"].Equals(Term) });
         }
@@ -32,7 +32,7 @@ namespace W3C.CCG.LinkedDataProofs.Purposes
         public bool Valid { get; set; }
     }
 
-    public class ValidationRequest
+    public class ValidateOptions
     {
         public VerificationMethod VerificationMethod { get; set; }
         public IDocumentLoader DocumentLoader { get; set; }

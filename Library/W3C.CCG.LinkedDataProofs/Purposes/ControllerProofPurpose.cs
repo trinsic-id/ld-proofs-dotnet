@@ -14,16 +14,16 @@ namespace W3C.CCG.LinkedDataProofs.Purposes
 
         public string Controller { get; }
 
-        public override async Task<ValidationResult> ValidateAsync(JToken proof, ValidationRequest request)
+        public override async Task<ValidationResult> ValidateAsync(JToken proof, ValidateOptions options)
         {
-            var result = await base.ValidateAsync(proof, request);
+            var result = await base.ValidateAsync(proof, options);
             if (!result.Valid)
             {
                 return result;
             }
 
             // TODO: Use correct validation here, with JSONLD framing and document resolution
-            result.Controller = Controller ?? request.VerificationMethod.Controller;
+            result.Controller = Controller ?? options.VerificationMethod.Controller;
             result.Valid = proof["verificationMethod"]?.Equals(result.Controller) ?? false;
 
             return result;

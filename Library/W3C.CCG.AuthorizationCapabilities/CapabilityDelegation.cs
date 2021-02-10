@@ -39,10 +39,10 @@ namespace W3C.CCG.AuthorizationCapabilities
             set => this["invoker"] = value;
         }
 
-        public string Target
+        public string InvocationTarget
         {
-            get => this["target"]?.Value<string>();
-            set => this["target"] = value;
+            get => this["invocationTarget"]?.Value<string>();
+            set => this["invocationTarget"] = value;
         }
 
         public string Delegator
@@ -55,12 +55,6 @@ namespace W3C.CCG.AuthorizationCapabilities
         {
             get => this["caveat"];
             set => this["caveat"] = value;
-        }
-
-        public JToken Proof
-        {
-            get => this["proof"];
-            set => this["proof"] = value;
         }
     }
 }
