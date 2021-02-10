@@ -1,6 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json.Linq;
 using W3C.CCG.DidCore;
+using W3C.CCG.LinkedDataProofs.Purposes;
 using W3C.CCG.SecurityVocabulary;
 
 namespace W3C.CCG.LinkedDataProofs
@@ -20,7 +21,11 @@ namespace W3C.CCG.LinkedDataProofs
 
         public string LdSuiteType { get; set; }
 
+        public LinkedDataProof Suite { get; set; }
+
         public string ProofPurpose { get; set; }
+
+        public ProofPurpose Purpose { get; set; }
 
         public IVerificationMethod VerificationMethod { get; set; }
 

@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+    <PackageReference Include="coverlet.collector" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Library\W3C.CCG.LinkedDataProofs\W3C.CCG.LinkedDataProofs.csproj" />
+    <ProjectReference Include="..\..\Library\W3C.CCG.AuthorizationCapabilities\W3C.CCG.AuthorizationCapabilities.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TestData\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="TestData\example-doc-with-beta-invocation.json" />
+    <None Remove="TestData\example-doc-with-alpha-invocation.json" />
+    <None Remove="TestData\example-doc.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TestData\example-doc-with-beta-invocation.json" />
+    <Content Include="TestData\example-doc-with-alpha-invocation.json" />
+    <Content Include="TestData\example-doc.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>
