@@ -1,11 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Threading.Tasks;
-using AngleSharp.Text;
 using Newtonsoft.Json.Linq;
-using VDS.RDF;
-using VDS.RDF.Parsing;
-using VDS.RDF.Writing;
 using W3C.CCG.LinkedDataProofs.Purposes;
 
 namespace W3C.CCG.LinkedDataProofs
@@ -121,16 +116,5 @@ namespace W3C.CCG.LinkedDataProofs
     public class VerifyProofResult
     {
 
-    }
-
-    public class SignatureOptions
-    {
-        public LinkedDataProof Suite { get; set; }
-
-        public ProofPurpose Purpose { get; set; }
-
-        public bool CompactProof { get; set; }
-
-        public IDocumentLoader DocumentLoader { get; set; }
     }
 }

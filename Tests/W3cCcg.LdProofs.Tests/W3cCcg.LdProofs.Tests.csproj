@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Library\W3C.CCG.LinkedDataProofs\W3C.CCG.LinkedDataProofs.csproj" />
     <ProjectReference Include="..\..\Library\W3C.CCG.AuthorizationCapabilities\W3C.CCG.AuthorizationCapabilities.csproj" />
+    <ProjectReference Include="..\..\Library\W3C.CCG.SecurityVocabulary\W3C.CCG.SecurityVocabulary.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="TestData\" />

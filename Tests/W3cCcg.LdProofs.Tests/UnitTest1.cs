@@ -16,30 +16,17 @@ namespace W3cCcg.LdProofs.Tests
         [Fact(DisplayName = "sign with capabilityInvocation proof purpose / should succeed w/key invoker")]
         public async Task Test1()
         {
-            /*
-             * describe('sign with capabilityInvocation proof purpose', () => {
-      it('should succeed w/key invoker', async () => {
-        const doc = clone(mock.exampleDoc);
-        const signed = await jsigs.sign(doc, {
-          suite: new Ed25519Signature2018({
-            key: new Ed25519KeyPair(alice.get('publicKey', 0)),
-            date: CONSTANT_DATE
-          }),
-          purpose: new CapabilityInvocation({
-            capability: capabilities.root.alpha.id
-          })
-        });
-        expect(signed).to.deep.equal(mock.exampleDocWithInvocation.alpha);
-      });*/
-
             var doc = Utilities.LoadJson("TestData/example-doc.json");
 
             var signedDoc = await LdSignatures.SignAsync(doc, new SignatureOptions
             {
-                Suite = new MockSuite(),
+                Suite = new MockSuite
+                {
+                    VerificationMethod = "did:example:bob"
+                },
                 Purpose = new CapabilityInvocationProofPurpose
                 {
-                    Controller = "urn:example: mock"
+                    Controller = "did:example:bob"
                 }
             });
         }

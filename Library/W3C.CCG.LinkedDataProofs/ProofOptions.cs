@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using W3C.CCG.DidCore;
 using W3C.CCG.LinkedDataProofs.Purposes;
@@ -17,25 +18,15 @@ namespace W3C.CCG.LinkedDataProofs
         /// </summary>
         public bool CompactProof { get; set; } = true;
 
-        public JToken Document { get; set; }
-
-        public string LdSuiteType { get; set; }
-
         public LinkedDataProof Suite { get; set; }
-
-        public string ProofPurpose { get; set; }
 
         public ProofPurpose Purpose { get; set; }
 
-        public IVerificationMethod VerificationMethod { get; set; }
+        public JObject Input { get; set; }
 
-        public DateTimeOffset? Created { get; set; }
+        public IDocumentLoader DocumentLoader { get; set; }
 
-        public string Nonce { get; set; }
-
-        public JToken ProofRequest { get; set; }
-
-        public JObject Proof { get; set; }
+        public IDictionary<string, JToken> AdditonalData { get; set; }
     }
 
     public class VerifyProofOptions

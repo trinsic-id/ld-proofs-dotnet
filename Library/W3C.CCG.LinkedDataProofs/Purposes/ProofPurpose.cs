@@ -24,6 +24,11 @@ namespace W3C.CCG.LinkedDataProofs.Purposes
             proof["proofPurpose"] = Term;
             return proof;
         }
+
+        public virtual bool Match(JObject proof)
+        {
+            return true;
+        }
     }
 
     public class ValidationResult

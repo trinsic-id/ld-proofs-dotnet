@@ -1,44 +1,38 @@
-﻿using System.Text;
+﻿using System;
+using System.Threading.Tasks;
+using W3C.CCG.DidCore;
+using W3C.CCG.LinkedDataProofs;
+using W3C.CCG.LinkedDataProofs.Purposes;
 using W3C.CCG.LinkedDataProofs.Suites;
 using Xunit;
+using W3C.CCG.SecurityVocabulary;
 
 namespace W3cCcg.LdProofs.Tests
 {
     public class Ed25519SuiteTests
     {
-        [Fact(DisplayName = "Generate new random key")]
-        public void GenerateRandomKey()
+        [Fact(DisplayName = "Create proof from random key")]
+        public async Task CreateProofRandomKey()
         {
-            var method = Ed25519VerificationKey2018.Generate();
+            var key = Ed25519VerificationKey2018.Generate();
 
-            Assert.NotNull(method);
-            Assert.NotNull(method.PublicKeyBase58);
-            Assert.NotNull(method.PrivateKeyBase58);
-            Assert.Equal(Ed25519VerificationKey2018.Name, method.TypeName);
-        }
+            var document = new DidDocument { Id = "did:example:alice" };
 
-        [Fact(DisplayName = "Sign payload")]
-        public void SignPayload()
-        {
-            var method = Ed25519VerificationKey2018.Generate();
-            var payload = Encoding.UTF8.GetBytes("my message");
+            var signedDocument = await LdSignatures.SignAsync(
+                document,
+                new SignatureOptions
+                {
+                    Suite = new Ed25519Signature2018
+                    {
+                        Signer = key,
+                        VerificationMethod = "did:example:alice#keys-1"
+                    },
+                    Purpose = new AssertionProofPurpose(),
+                    DocumentLoader = CachingDocumentLoader.Default
+                });
 
-            var signature = method.Sign(payload);
-
-            Assert.NotNull(signature);
-            Assert.Equal(Chaos.NaCl.Ed25519.SignatureSizeInBytes, signature.Length);
-        }
-
-        [Fact(DisplayName = "Verify signature")]
-        public void VerifyPayload()
-        {
-            var method = Ed25519VerificationKey2018.Generate();
-            var payload = Encoding.UTF8.GetBytes("my message");
-            var signature = method.Sign(payload);
-
-            var verified = method.Verify(signature, payload);
-
-            Assert.True(verified);
+            Assert.NotNull(document);
+            Assert.NotNull(document["proof"]);
         }
     }
 }

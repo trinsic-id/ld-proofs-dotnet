@@ -4,15 +4,22 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using VDS.RDF.JsonLd;
 using W3C.CCG.DidCore;
+using W3C.CCG.SecurityVocabulary;
 
 namespace W3C.CCG.LinkedDataProofs
 {
-    public class CustomDocumentLoader : IDocumentLoader
+    public class CachingDocumentLoader : IDocumentLoader
     {
+        public static IDocumentLoader Default { get; set; } = new CachingDocumentLoader(Array.Empty<IDidDriver>())
+            .AddCached(Constants.DID_V1_URL, Contexts.DidContextV1)
+            .AddCached(Constants.SECURITY_CONTEXT_V1_URL, Contexts.SecurityContextV1)
+            .AddCached(Constants.SECURITY_CONTEXT_V2_URL, Contexts.SecurityContextV2);
+
+
         public Dictionary<Uri, RemoteDocument> Documents = new Dictionary<Uri, RemoteDocument>();
         private readonly IEnumerable<IDidDriver> didDrivers;
 
-        public CustomDocumentLoader(IEnumerable<IDidDriver> didDrivers)
+        public CachingDocumentLoader(IEnumerable<IDidDriver> didDrivers)
         {
             this.didDrivers = didDrivers;
         }

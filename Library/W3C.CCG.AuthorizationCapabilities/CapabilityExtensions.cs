@@ -251,7 +251,7 @@ namespace W3C.CCG.AuthorizationCapabilities
             }
 
             // create a document loader that will use properly embedded capabilities
-            var documentLoader = new CustomDocumentLoader(Array.Empty<IDidDriver>());
+            var documentLoader = new CachingDocumentLoader(Array.Empty<IDidDriver>());
             var next = capabilityChain;
             while (next.Any())
             {
