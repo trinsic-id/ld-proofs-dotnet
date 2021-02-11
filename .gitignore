@@ -351,3 +351,5 @@ MigrationBackup/
 .ionide/
 
 Tests/W3cCcg.LdProofs.Tests/.DS_Store
+
+.DS_Store

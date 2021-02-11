@@ -10,36 +10,36 @@ using W3C.CCG.SecurityVocabulary;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class ServiceCollectionExtensions
-    {
-        public static IServiceCollection AddLinkedDataProofs(this IServiceCollection services, Action<ILinkedDataProofsBuilder> configure = null)
-        {
-            var builder = new DefaultLinkedDataProofsBuilder(services);
+    //public static class ServiceCollectionExtensions
+    //{
+    //    public static IServiceCollection AddLinkedDataProofs(this IServiceCollection services, Action<ILinkedDataProofsBuilder> configure = null)
+    //    {
+    //        var builder = new DefaultLinkedDataProofsBuilder(services);
 
-            configure?.Invoke(builder);
+    //        configure?.Invoke(builder);
 
-            services.TryAddSingleton<ISuiteFactory, DefaultSuiteFactory>();
-            services.TryAddSingleton<ILinkedDataProofService, DefaultLinkedDataProofService>();
-            services.TryAddSingleton<IDocumentLoader, CustomDocumentLoader>();
+    //        services.TryAddSingleton<ISuiteFactory, DefaultSuiteFactory>();
+    //        services.TryAddSingleton<ILinkedDataProofService, DefaultLinkedDataProofService>();
+    //        services.TryAddSingleton<IDocumentLoader, CustomDocumentLoader>();
 
-            return services;
-        }
-    }
+    //        return services;
+    //    }
+    //}
 
-    public interface ILinkedDataProofsBuilder
-    {
-        IServiceCollection Services { get; }
-    }
+    //public interface ILinkedDataProofsBuilder
+    //{
+    //    IServiceCollection Services { get; }
+    //}
 
-    internal class DefaultLinkedDataProofsBuilder : ILinkedDataProofsBuilder
-    {
-        public DefaultLinkedDataProofsBuilder(IServiceCollection services)
-        {
-            Services = services;
-        }
+    //internal class DefaultLinkedDataProofsBuilder : ILinkedDataProofsBuilder
+    //{
+    //    public DefaultLinkedDataProofsBuilder(IServiceCollection services)
+    //    {
+    //        Services = services;
+    //    }
 
-        public IServiceCollection Services { get; }
-    }
+    //    public IServiceCollection Services { get; }
+    //}
 }
 
 namespace Newtonsoft.Json.Linq

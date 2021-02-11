@@ -16,16 +16,10 @@ namespace W3cCcg.LdProofs.Tests
             throw new NotImplementedException();
         }
 
-        protected override async Task<JObject> SignAsync(JToken verifyData, JObject proof, CreateProofOptions options)
+        protected override Task<JObject> SignAsync(byte[] verifyData, JObject proof, CreateProofOptions options)
         {
-            await Task.Yield();
-
-            if (verifyData is JArray data)
-            {
-                proof["proofValue"] = Convert.ToBase64String(data.ToObject<byte[]>());
-                return proof;
-            }
-            throw new NotSupportedException();
+            proof["proofValue"] = Convert.ToBase64String(verifyData);
+            return Task.FromResult(proof);
         }
     }
 }

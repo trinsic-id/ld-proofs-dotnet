@@ -37,6 +37,5 @@ namespace W3C.CCG.LinkedDataProofs.Purposes
     {
         public VerificationMethod VerificationMethod { get; set; }
         public IDocumentLoader DocumentLoader { get; set; }
-        public ILinkedDataSuite Suite { get; set; }
     }
 }

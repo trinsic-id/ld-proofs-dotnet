@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace W3C.CCG.DidCore
 {
@@ -47,21 +48,6 @@ namespace W3C.CCG.DidCore
         #endregion
 
         #region Public methods
-
-        public virtual JToken Sign(JToken input)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual bool Verify(JToken input)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual string GetFingerprint()
-        {
-            throw new NotImplementedException();
-        }
 
         public virtual VerificationMethod GetPublicNode()
         {
