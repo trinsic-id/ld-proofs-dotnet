@@ -30,7 +30,7 @@ namespace W3C.CCG.LinkedDataProofs.Bbs.Tests
             var document = Utilities.LoadJson("Data/test_signed_document.json");
             var proofRequest = Utilities.LoadJson("Data/test_reveal_document.json");
 
-            var proof = LdProofService.CreateProof(new CreateProofOptions
+            var proof = LdProofService.CreateProof(new ProofOptions
             {
                 Document = document,
                 ProofRequest = proofRequest,
@@ -52,7 +52,7 @@ namespace W3C.CCG.LinkedDataProofs.Bbs.Tests
             var document = Utilities.LoadJson("Data/test_signed_document.json");
             var proofRequest = Utilities.LoadJson("Data/test_reveal_all_document.json");
 
-            var proof = LdProofService.CreateProof(new CreateProofOptions
+            var proof = LdProofService.CreateProof(new ProofOptions
             {
                 Document = document,
                 ProofRequest = proofRequest,
@@ -74,7 +74,7 @@ namespace W3C.CCG.LinkedDataProofs.Bbs.Tests
             var document = Utilities.LoadJson("Data/test_signed_vc.json");
             var proofRequest = Utilities.LoadJson("Data/test_vc_reveal_document.json");
 
-            var proof = LdProofService.CreateProof(new CreateProofOptions
+            var proof = LdProofService.CreateProof(new ProofOptions
             {
                 Document = document,
                 ProofRequest = proofRequest,
@@ -94,7 +94,7 @@ namespace W3C.CCG.LinkedDataProofs.Bbs.Tests
             var document = Utilities.LoadJson("Data/test_proof_document.json");
             var proofRequest = Utilities.LoadJson("Data/test_reveal_all_document.json");
 
-            var proof = LdProofService.VerifyProof(new VerifyProofOptions
+            var proof = LdProofService.VerifyProof(new ProofOptions
             {
                 Document = document,
                 ProofRequest = proofRequest,

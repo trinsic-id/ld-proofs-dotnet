@@ -13,9 +13,15 @@ namespace W3C.CCG.LinkedDataProofs.Suites
 
         public override string Algorithm => "EdDSA";
 
-        public override Task<VerifyProofResult> VerifyProofAsync(JToken proof, VerifyProofOptions options)
+        /// <summary>
+        /// Returns a typed instance capable of signing and verifying
+        /// </summary>
+        /// <param name="jToken"></param>
+        /// <param name="verificationMethod"></param>
+        /// <returns></returns>
+        protected override SignerVerificationMethod GetSigner(JToken verificationMethod)
         {
-            throw new System.NotImplementedException();
+            return new Ed25519VerificationKey2018(verificationMethod as JObject);
         }
     }
 }

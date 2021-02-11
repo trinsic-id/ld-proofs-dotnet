@@ -16,7 +16,7 @@ namespace W3C.CCG.LinkedDataProofs
         {
         }
 
-        protected override Task<JObject> SignAsync(byte[] verifyData, JObject proof, CreateProofOptions options)
+        protected override Task<JObject> SignAsync(byte[] verifyData, JObject proof, ProofOptions options)
         {
             // JWS header
             var header = new JObject
@@ -51,5 +51,60 @@ namespace W3C.CCG.LinkedDataProofs
 
             return Task.FromResult(proof);
         }
+
+        protected override Task VerifyAsync(byte[] verifyData, JToken proof, JToken verificationMethod, ProofOptions options)
+        {
+            if (proof["jws"] == null || !proof["jws"].ToString().Contains(".."))
+            {
+                throw new Exception("The proof does not include a valid 'jws' property.");
+            }
+            var parts = proof["jws"].ToString().Split("..");
+            var (encodedHeader, encodedSignature) = (parts.First(), parts.Last());
+
+            var header = JObject.Parse(Decode(encodedHeader));
+
+            if (header["alg"]?.ToString() != Algorithm)
+            {
+                throw new Exception($"Invalid JWS header parameters for ${TypeName}.");
+            }
+            var signature = DecodeBytes(encodedSignature);
+
+            var data = Encoding.ASCII.GetBytes($"{encodedHeader}.")
+                .Concat(verifyData)
+                .ToArray();
+            var signer = GetSigner(verificationMethod);
+
+            var valid = signer.Verify(signature, data);
+            if (!valid)
+            {
+                throw new Exception("Invalid signature");
+            }
+            return Task.CompletedTask;
+        }
+
+
+        public string Decode(string str)
+        {
+            byte[] decbuff = Convert.FromBase64String(Repad(str.Replace(",", "=").Replace("-", "+").Replace("_", "+")));
+            return System.Text.Encoding.UTF8.GetString(decbuff);
+        }
+
+        public byte[] DecodeBytes(string str)
+        {
+            return Convert.FromBase64String(Repad(str.Replace("-", "+").Replace("_", "/")));
+        }
+
+        string Repad(string base64)
+        {
+            return base64.PadRight(base64.Length + (4 - base64.Length % 4) % 4, '=');
+        }
+
+        public string Encode(string input)
+        {
+            byte[] encbuff = Encoding.UTF8.GetBytes(input ?? "");
+            return Convert.ToBase64String(encbuff).Replace("=", ",").Replace("+", "-").Replace("/", "_");
+        }
+
+        protected abstract SignerVerificationMethod GetSigner(JToken verificationMethod);
     }
 }

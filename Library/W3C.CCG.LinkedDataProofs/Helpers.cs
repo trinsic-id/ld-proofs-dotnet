@@ -15,7 +15,7 @@ namespace W3C.CCG.LinkedDataProofs
 {
     public static class Helpers
     {
-        public static IEnumerable<string> ToRdf(JToken token, JsonLdProcessorOptions options)
+        public static string ToRdf(JToken token, JsonLdProcessorOptions options)
         {
             var jsonLdParser = new JsonLdParser(options);
             var store = new TripleStore();
@@ -24,15 +24,23 @@ namespace W3C.CCG.LinkedDataProofs
             var nqWriter = new NQuadsWriter(NQuadsSyntax.Rdf11);
             using var expectedTextWriter = new System.IO.StringWriter();
             nqWriter.Save(store, expectedTextWriter);
-            return expectedTextWriter.ToString().Split(Environment.NewLine).Where(x => !string.IsNullOrWhiteSpace(x));
+            return expectedTextWriter.ToString();
         }
 
-        public static IEnumerable<string> Canonize(JToken token, JsonLdProcessorOptions options)
+        public static IEnumerable<string> ToQuads(JToken token, JsonLdProcessorOptions options)
         {
             return ToRdf(token, options)
-                .Select(x => x.StartsWith("_:b") ? x.ReplaceFirst("_:b", "_:c14n") : x)
-                .OrderBy(x => x)
-                .Select(x => x.Replace("^^<http://www.w3.org/2001/XMLSchema#string>", ""));
+                .Split(Environment.NewLine)
+                .Where(x => !string.IsNullOrWhiteSpace(x));
+        }
+
+        public static string Canonize(JToken token, JsonLdProcessorOptions options)
+        {
+            return ToRdf(token, options)
+                //.Select(x => x.StartsWith("_:b") ? x.ReplaceFirst("_:b", "_:c14n") : x)
+                //.OrderBy(x => x)
+                .Replace("_:b", "_:c14n")
+                .Replace("^^<http://www.w3.org/2001/XMLSchema#string>", "");
         }
 
         public static JToken FromRdf(IEnumerable<string> statements)

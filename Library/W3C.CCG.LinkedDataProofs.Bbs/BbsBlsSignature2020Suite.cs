@@ -22,7 +22,7 @@ namespace BbsDataSignatures
 
         public BbsSignatureService BbsProvider { get; }
 
-        public JToken CreateProof(CreateProofOptions options, JsonLdProcessorOptions processorOptions)
+        public JToken CreateProof(ProofOptions options, JsonLdProcessorOptions processorOptions)
         {
             if (!(options.VerificationMethod is Bls12381VerificationKey2020 verificationMethod))
             {
@@ -69,9 +69,9 @@ namespace BbsDataSignatures
             return proof;
         }
 
-        public Task<JToken> CreateProofAsync(CreateProofOptions options, JsonLdProcessorOptions processorOptions) => Task.FromResult(CreateProof(options, processorOptions));
+        public Task<JToken> CreateProofAsync(ProofOptions options, JsonLdProcessorOptions processorOptions) => Task.FromResult(CreateProof(options, processorOptions));
 
-        public bool VerifyProof(VerifyProofOptions options, JsonLdProcessorOptions processorOptions)
+        public bool VerifyProof(ProofOptions options, JsonLdProcessorOptions processorOptions)
         {
             var verifyData = CreateVerifyData(options.Proof, options.Document, processorOptions);
 
@@ -91,7 +91,7 @@ namespace BbsDataSignatures
             }
         }
 
-        public Task<bool> VerifyProofAsync(VerifyProofOptions options, JsonLdProcessorOptions processorOptions) => Task.FromResult(VerifyProof(options, processorOptions));
+        public Task<bool> VerifyProofAsync(ProofOptions options, JsonLdProcessorOptions processorOptions) => Task.FromResult(VerifyProof(options, processorOptions));
 
         internal static IEnumerable<string> CreateVerifyData(JToken proof, JToken document, JsonLdProcessorOptions options)
         {

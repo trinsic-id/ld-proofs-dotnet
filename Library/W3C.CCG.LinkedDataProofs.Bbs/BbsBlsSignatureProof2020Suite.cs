@@ -26,7 +26,7 @@ namespace BbsDataSignatures
 
         public BbsSignatureService BbsProvider { get; }
 
-        public JToken CreateProof(CreateProofOptions options, JsonLdProcessorOptions processorOptions)
+        public JToken CreateProof(ProofOptions options, JsonLdProcessorOptions processorOptions)
         {
             var (document, proofs) = options.Document.GetProofs(processorOptions);
             var proof = new BbsBlsSignature2020(proofs.FirstOrDefault() ?? throw new Exception("Proof not found"));
@@ -85,9 +85,9 @@ namespace BbsDataSignatures
             return revealDocument;
         }
 
-        public Task<JToken> CreateProofAsync(CreateProofOptions options, JsonLdProcessorOptions processorOptions) => Task.FromResult(CreateProof(options, processorOptions));
+        public Task<JToken> CreateProofAsync(ProofOptions options, JsonLdProcessorOptions processorOptions) => Task.FromResult(CreateProof(options, processorOptions));
 
-        public bool VerifyProof(VerifyProofOptions options, JsonLdProcessorOptions processorOptions)
+        public bool VerifyProof(ProofOptions options, JsonLdProcessorOptions processorOptions)
         {
             options.Proof["type"] = "https://w3c-ccg.github.io/ldp-bbs2020/context/v1#BbsBlsSignature2020";
 
@@ -124,7 +124,7 @@ namespace BbsDataSignatures
             }
         }
 
-        public Task<bool> VerifyProofAsync(VerifyProofOptions options, JsonLdProcessorOptions processorOptions) => Task.FromResult(VerifyProof(options, processorOptions));
+        public Task<bool> VerifyProofAsync(ProofOptions options, JsonLdProcessorOptions processorOptions) => Task.FromResult(VerifyProof(options, processorOptions));
 
         #region Private methods
 

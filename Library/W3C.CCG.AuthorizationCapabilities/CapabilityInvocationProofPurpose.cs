@@ -26,7 +26,7 @@ namespace W3C.CCG.AuthorizationCapabilities
 
         public PurposeOptions Options { get; set; } = new PurposeOptions();
 
-        public override async Task<ValidationResult> ValidateAsync(JToken proof, ValidateOptions options)
+        public override async Task<ValidationResult> ValidateAsync(JToken proof, ProofOptions options)
         {
             if (proof["capability"] is null)
             {
@@ -48,11 +48,11 @@ namespace W3C.CCG.AuthorizationCapabilities
             // 3. verify the invoker...
             // authorized invoker must match the verification method itself OR
             // the controller of the verification method
-            if (capability.HasInvoker(options.VerificationMethod))
-            {
-                throw new Exception("The authorized invoker does not match the " +
-                    "verification method or its controller.");
-            }
+            //if (capability.HasInvoker(options.AdditonalData["verificationMethod"] as JToken))
+            //{
+            //    throw new Exception("The authorized invoker does not match the " +
+            //        "verification method or its controller.");
+            //}
 
             var validateResult = await base.ValidateAsync(proof, options);
 

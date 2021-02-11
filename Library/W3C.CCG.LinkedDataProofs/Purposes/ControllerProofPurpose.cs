@@ -13,7 +13,7 @@ namespace W3C.CCG.LinkedDataProofs.Purposes
 
         public string Controller { get; set; }
 
-        public override async Task<ValidationResult> ValidateAsync(JToken proof, ValidateOptions options)
+        public override async Task<ValidationResult> ValidateAsync(JToken proof, ProofOptions options)
         {
             var result = await base.ValidateAsync(proof, options);
             if (!result.Valid)
@@ -21,10 +21,8 @@ namespace W3C.CCG.LinkedDataProofs.Purposes
                 return result;
             }
 
-            // TODO: Use correct validation here, with JSONLD framing and document resolution
-            result.Controller = Controller ?? options.VerificationMethod.Controller;
-            result.Valid = proof["verificationMethod"]?.Equals(result.Controller) ?? false;
-
+            var controller = Controller ?? (options.AdditonalData["verificationMethod"] as JObject)["id"];
+            result.Valid = proof["verificationMethod"]?.Equals(controller) ?? false;
             return result;
         }
     }

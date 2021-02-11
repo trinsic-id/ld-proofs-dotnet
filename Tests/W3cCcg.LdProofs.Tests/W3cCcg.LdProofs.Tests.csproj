@@ -23,14 +23,50 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="TestData\example-doc-with-beta-invocation.json" />
-    <None Remove="TestData\example-doc-with-alpha-invocation.json" />
-    <None Remove="TestData\example-doc.json" />
+    <None Remove="TestData\ed25519-carol-keys.json" />
+    <None Remove="TestData\ed25519-diana-keys.json" />
+    <None Remove="TestData\did-doc-gamma.json" />
+    <None Remove="TestData\did-doc-alpha.json" />
+    <None Remove="TestData\did-doc-beta.json" />
+    <None Remove="TestData\veres-one-context.jsonld" />
+    <None Remove="TestData\delegated-ocap-root-beta.json" />
+    <None Remove="TestData\delegated-ocap-root-alpha.json" />
+    <None Remove="TestData\ben-inv-ocap.jsonld" />
+    <None Remove="TestData\ben-del-ocap.jsonld" />
+    <None Remove="TestData\did-doc-delta.json" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="TestData\example-doc-with-beta-invocation.json" />
-    <Content Include="TestData\example-doc-with-alpha-invocation.json" />
-    <Content Include="TestData\example-doc.json">
+    <Content Include="TestData\ed25519-carol-keys.json" />
+    <Content Include="TestData\ed25519-diana-keys.json" />
+    <Content Include="TestData\did-doc-gamma.json" />
+    <Content Include="TestData\did-doc-alpha.json" />
+    <Content Include="TestData\did-doc-beta.json" />
+    <Content Include="TestData\veres-one-context.jsonld" />
+    <Content Include="TestData\delegated-ocap-root-beta.json" />
+    <Content Include="TestData\delegated-ocap-root-alpha.json" />
+    <Content Include="TestData\ben-inv-ocap.jsonld" />
+    <Content Include="TestData\ben-del-ocap.jsonld" />
+    <Content Include="TestData\did-doc-delta.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="TestData\alyssa-del-ocap.jsonld">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
+    <None Update="TestData\alyssa-inv-ocap.jsonld">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\ed25519-alice-keys.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\ed25519-bob-keys.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\example-doc.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\example-doc-with-alpha-invocation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

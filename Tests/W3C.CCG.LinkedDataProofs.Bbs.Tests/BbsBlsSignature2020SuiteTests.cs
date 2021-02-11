@@ -37,7 +37,7 @@ namespace LindedDataProofs.Bbs
 
             var document = Utilities.LoadJson("Data/test_document.json");
 
-            var proof = LdProofService.CreateProof(new CreateProofOptions
+            var proof = LdProofService.CreateProof(new ProofOptions
             {
                 Document = document,
                 LdSuiteType = BbsBlsSignature2020.Name,
@@ -56,7 +56,7 @@ namespace LindedDataProofs.Bbs
 
             var document = Utilities.LoadJson("Data/test_vc.json");
 
-            var proof = LdProofService.CreateProof(new CreateProofOptions
+            var proof = LdProofService.CreateProof(new ProofOptions
             {
                 Document = document,
                 LdSuiteType = BbsBlsSignature2020.Name,
@@ -73,7 +73,7 @@ namespace LindedDataProofs.Bbs
         {
             var document = Utilities.LoadJson("Data/test_signed_document.json");
 
-            var proof = LdProofService.VerifyProof(new VerifyProofOptions
+            var proof = LdProofService.VerifyProof(new ProofOptions
             {
                 Document = document,
                 LdSuiteType = BbsBlsSignature2020.Name,
@@ -88,7 +88,7 @@ namespace LindedDataProofs.Bbs
         {
             var document = Utilities.LoadJson("Data/test_signed_vc.json");
 
-            var proof = LdProofService.VerifyProof(new VerifyProofOptions
+            var proof = LdProofService.VerifyProof(new ProofOptions
             {
                 Document = document,
                 LdSuiteType = BbsBlsSignature2020.Name,
@@ -103,7 +103,7 @@ namespace LindedDataProofs.Bbs
         {
             var document = Utilities.LoadJson("Data/test_bad_signed_document.json");
 
-            var proof = LdProofService.VerifyProof(new VerifyProofOptions
+            var proof = LdProofService.VerifyProof(new ProofOptions
             {
                 Document = document,
                 LdSuiteType = BbsBlsSignature2020.Name,

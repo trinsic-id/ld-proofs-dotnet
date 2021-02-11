@@ -11,15 +11,20 @@ namespace W3cCcg.LdProofs.Tests
         {
         }
 
-        public override Task<VerifyProofResult> VerifyProofAsync(JToken proof, VerifyProofOptions options)
+        public override Task<VerifyProofResult> VerifyProofAsync(JToken proof, ProofOptions options)
         {
             throw new NotImplementedException();
         }
 
-        protected override Task<JObject> SignAsync(byte[] verifyData, JObject proof, CreateProofOptions options)
+        protected override Task<JObject> SignAsync(byte[] verifyData, JObject proof, ProofOptions options)
         {
             proof["proofValue"] = Convert.ToBase64String(verifyData);
             return Task.FromResult(proof);
+        }
+
+        protected override Task VerifyAsync(byte[] verifyData, JToken proof, JToken verificationMethod, ProofOptions options)
+        {
+            throw new NotImplementedException();
         }
     }
 }
