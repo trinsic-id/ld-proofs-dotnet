@@ -43,8 +43,7 @@ namespace W3C.CCG.LinkedDataProofs
                 Input = input as JObject,
                 Purpose = options.Purpose,
                 Suite = options.Suite,
-                CompactProof = options.CompactProof,
-                AdditonalData = options.AdditonalData
+                CompactProof = options.CompactProof
             });
 
             // TODO: Check compaction again

@@ -12,7 +12,5 @@
         }
     ],
     "capabilityInvocation": [ "https://example.com/i/alice/keys/1" ],
-    "capabilityDelegation": [ "https://example.com/i/alice/keys/1" ],
-    "authentication": [ "https://example.com/i/alice/keys/1" ],
-    "assertionMethod": [ "https://example.com/i/alice/keys/1" ]
+    "capabilityDelegation": [ "https://example.com/i/alice/keys/1" ]
 }

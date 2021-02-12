@@ -30,8 +30,8 @@ namespace W3C.CCG.LinkedDataProofs
         public static IEnumerable<string> CanonizeStatements(JToken token, JsonLdProcessorOptions options)
         {
             // Replace anonymous nodes starting with `b` with `c14n`
-            // sort the statements, and remove the string type added
-            // by the RDF processor
+            // sort the statements, and remove the type description for strings
+            // added by the RDF processor
             return ToRdf(token, options)
                 .Select(x => x.StartsWith("_:b") ? x.ReplaceFirst("_:b", "_:c14n") : x)
                 .OrderBy(x => x)

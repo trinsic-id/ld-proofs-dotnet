@@ -6,6 +6,7 @@ using W3C.CCG.SecurityVocabulary;
 using W3C.CCG.DidCore;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using W3C.CCG.AuthorizationCapabilities;
 
 namespace W3cCcg.LdProofs.Tests
 {
@@ -22,6 +23,14 @@ namespace W3cCcg.LdProofs.Tests
             ExampleDoc = Utilities.LoadJson("TestData/example-doc.json");
             ExampleDocAlphaInvocation = Utilities.LoadJson("TestData/example-doc-with-alpha-invocation.json");
 
+            RootCapAlpha = new CapabilityDelegation
+            {
+                Context = Constants.SECURITY_CONTEXT_V2_URL,
+                Id = "https://example.org/alice/caps#1",
+                Invoker = "https://example.com/i/alice/keys/1",
+                Delegator = "https://example.com/i/alice/keys/1"
+            };
+
             DocumentLoader = new CachingDocumentLoader(Array.Empty<IDidDriver>())
                 .AddCached(Constants.DID_V1_URL, Contexts.DidContextV1)
                 .AddCached(Constants.SECURITY_CONTEXT_V1_URL, Contexts.SecurityContextV1)
@@ -31,7 +40,8 @@ namespace W3cCcg.LdProofs.Tests
                 .AddCached(Bob_Keys.Id, Bob_Keys)
                 .AddCached((Bob_Keys.CapabilityDelegation.First() as VerificationMethod).Id, Bob_Keys)
                 .AddCached((Bob_Keys.CapabilityInvocation.First() as VerificationMethod).Id, Bob_Keys)
-                .AddCached(ExampleDoc["id"].ToString(), ExampleDoc);
+                .AddCached(ExampleDoc["id"].ToString(), ExampleDoc)
+                .AddCached(RootCapAlpha.Id, RootCapAlpha);
         }
 
         public DidDocument Alice_Keys { get; }
@@ -39,5 +49,6 @@ namespace W3cCcg.LdProofs.Tests
         public JObject ExampleDoc { get; }
         public JObject ExampleDocAlphaInvocation { get; }
         public IDocumentLoader DocumentLoader { get; }
+        public CapabilityDelegation RootCapAlpha { get; }
     }
 }

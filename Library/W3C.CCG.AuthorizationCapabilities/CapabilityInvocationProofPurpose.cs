@@ -2,29 +2,23 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using VDS.RDF.JsonLd;
+using W3C.CCG.DidCore;
 using W3C.CCG.LinkedDataProofs;
 using W3C.CCG.LinkedDataProofs.Purposes;
 
 namespace W3C.CCG.AuthorizationCapabilities
 {
-    public class PurposeOptions
-    {
-        public string CapabilityAction { get; set; }
-        public string ExpectedAction { get; set; }
-        public IJEnumerable<JToken> CapabilityChain { get; set; }
-        public string Capability { get; set; }
-        public string ExpectedTarget { get; set; }
-        public string ExpectedRootCapability { get; set; }
-        public LinkedDataProof Suite { get; set; }
-    }
-
-    public class CapabilityInvocationProofPurpose : ControllerProofPurpose
+    public class CapabilityInvocationProofPurpose : ControllerPurpose
     {
         public CapabilityInvocationProofPurpose() : base("capabilityInvocation")
         {
         }
 
-        public PurposeOptions Options { get; set; } = new PurposeOptions();
+        public CapabilityInvocationProofPurpose(PurposeOptions options) : base("capabilityInvocation")
+        {
+            Options = options;
+        }
 
         public override async Task<ValidationResult> ValidateAsync(JToken proof, ProofOptions options)
         {
@@ -33,13 +27,17 @@ namespace W3C.CCG.AuthorizationCapabilities
                 throw new Exception("'capability' was not found in the capability invocation proof.");
             }
 
-            if (Options.ExpectedTarget == null)
+            if (Options?.ExpectedTarget == null)
             {
                 throw new ArgumentNullException("ExpectedTarget is required.");
             }
 
             // 1. get the capability in the security v2 context
-            var result = await Helpers.FetchInSecurityContextAsync(proof["capability"], false, null);
+            var result = await Helpers.FetchInSecurityContextAsync(proof["capability"], false, new JsonLdProcessorOptions
+            {
+                CompactToRelative = false,
+                DocumentLoader = options.DocumentLoader.Load
+            });
             var capability = new CapabilityDelegation(result as JObject);
 
             // 2. verify the capability delegation chain
@@ -48,21 +46,27 @@ namespace W3C.CCG.AuthorizationCapabilities
             // 3. verify the invoker...
             // authorized invoker must match the verification method itself OR
             // the controller of the verification method
-            //if (capability.HasInvoker(options.AdditonalData["verificationMethod"] as JToken))
-            //{
-            //    throw new Exception("The authorized invoker does not match the " +
-            //        "verification method or its controller.");
-            //}
+            if (!capability.HasInvoker(new VerificationMethod(Options.VerificationMethod)))
+            {
+                throw new Exception("The authorized invoker does not match the " +
+                    "verification method or its controller.");
+            }
 
             var validateResult = await base.ValidateAsync(proof, options);
 
             validateResult.Invoker = validateResult.Controller;
+            validateResult.Controller = null;
 
             return validateResult;
         }
 
         public override JObject Update(JObject proof)
         {
+            if (Options?.Capability == null)
+            {
+                throw new Exception("'capability' is required.");
+            }
+
             proof = base.Update(proof);
 
             proof["capability"] = Options.Capability;

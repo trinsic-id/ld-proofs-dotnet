@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using VDS.RDF.JsonLd;
+using W3C.CCG.DidCore;
 using W3C.CCG.SecurityVocabulary;
 
 namespace W3C.CCG.LinkedDataProofs
@@ -73,14 +74,16 @@ namespace W3C.CCG.LinkedDataProofs
 
             await VerifyAsync(verifyData, proof, verificationMethod, options);
 
-            await options.Purpose.ValidateAsync(proof, options);
+            // Validate proof purpose
+            options.Purpose.Options.VerificationMethod = new VerificationMethod(verificationMethod);
+            var result = await options.Purpose.ValidateAsync(proof, options);
 
-            return null;
+            return new VerifyProofResult();
         }
 
         protected abstract Task VerifyAsync(byte[] verifyData, JToken proof, JToken verificationMethod, ProofOptions options);
 
-        protected virtual JToken GetVerificationMethod(JObject proof, ProofOptions options)
+        protected virtual JObject GetVerificationMethod(JObject proof, ProofOptions options)
         {
             var verificationMethod = proof["verificationMethod"] ?? throw new Exception("No 'verificationMethod' found in proof.");
 

@@ -8,6 +8,7 @@ using Xunit;
 using W3C.CCG.SecurityVocabulary;
 using Newtonsoft.Json.Linq;
 using System.Linq;
+using W3C.CCG.AuthorizationCapabilities;
 
 namespace W3cCcg.LdProofs.Tests
 {
@@ -35,7 +36,7 @@ namespace W3cCcg.LdProofs.Tests
                         Signer = aliceKey,
                         VerificationMethod = aliceKey.Id
                     },
-                    Purpose = new AssertionProofPurpose(),
+                    Purpose = new AssertionMethodPurpose(),
                     DocumentLoader = Mock.DocumentLoader
                 });
 
@@ -56,11 +57,29 @@ namespace W3cCcg.LdProofs.Tests
                 options: new SignatureOptions
                 {
                     Suite = new Ed25519Signature2018(),
-                    Purpose = new AssertionProofPurpose(),
+                    Purpose = new CapabilityInvocationProofPurpose(new PurposeOptions
+                    {
+                        ExpectedTarget = Mock.RootCapAlpha.Id
+                    }),
                     DocumentLoader = Mock.DocumentLoader
                 });
 
             Assert.NotNull(result);
+        }
+
+        [Fact(DisplayName = "Verify signed document for incorrect purpose throws")]
+        public async Task VerifySignedDocumentIncorrectPurposeThrows()
+        {
+            var cap = Mock.ExampleDocAlphaInvocation;
+
+            await Assert.ThrowsAsync<ProofValidationException>(() => LdSignatures.VerifyAsync(
+                document: cap,
+                options: new SignatureOptions
+                {
+                    Suite = new Ed25519Signature2018(),
+                    Purpose = new AssertionMethodPurpose(),
+                    DocumentLoader = Mock.DocumentLoader
+                }));
         }
 
         [Fact(DisplayName = "Verify proof")]
@@ -84,7 +103,7 @@ namespace W3cCcg.LdProofs.Tests
                         Signer = signer,
                         VerificationMethod = key.Id
                     },
-                    Purpose = new AssertionProofPurpose(),
+                    Purpose = new AssertionMethodPurpose(),
                     DocumentLoader = documentLoader
                 });
 
@@ -96,7 +115,7 @@ namespace W3cCcg.LdProofs.Tests
                 {
                     Signer = signer
                 },
-                Purpose = new AssertionProofPurpose(),
+                Purpose = new AssertionMethodPurpose(),
                 DocumentLoader = documentLoader
             });
 

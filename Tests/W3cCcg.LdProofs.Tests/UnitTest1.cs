@@ -11,7 +11,7 @@ using Xunit;
 
 namespace W3cCcg.LdProofs.Tests
 {
-    public class UnitTest1
+    public class CapabilityTests
     {
         [Fact(DisplayName = "sign with capabilityInvocation proof purpose / should succeed w/key invoker")]
         public async Task Test1()
@@ -24,9 +24,13 @@ namespace W3cCcg.LdProofs.Tests
                 {
                     VerificationMethod = "did:example:bob"
                 },
-                Purpose = new CapabilityInvocationProofPurpose
+                Purpose = new CapabilityInvocationProofPurpose()
                 {
-                    Controller = "did:example:bob"
+                    Controller = "did:example:bob",
+                    Options = new PurposeOptions
+                    {
+                        Capability = "http://example/mock"
+                    }
                 }
             });
         }
@@ -63,7 +67,7 @@ namespace W3cCcg.LdProofs.Tests
                 {
                     VerificationMethod = "did:example:alice"
                 },
-                Purpose = new AssertionProofPurpose()
+                Purpose = new AssertionMethodPurpose()
             });
 
             Assert.NotNull(data);

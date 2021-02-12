@@ -62,7 +62,6 @@ namespace W3C.CCG.LinkedDataProofs
             var (encodedHeader, encodedSignature) = (parts.First(), parts.Last());
 
             var header = JObject.Parse(Decode(encodedHeader));
-
             if (header["alg"]?.ToString() != Algorithm)
             {
                 throw new Exception($"Invalid JWS header parameters for ${TypeName}.");

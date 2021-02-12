@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using VDS.RDF.JsonLd;
 using W3C.CCG.DidCore;
+using W3C.CCG.SecurityVocabulary;
 
 namespace W3C.CCG.LinkedDataProofs.Purposes
 {
-    public class ControllerProofPurpose : ProofPurpose
+    public class ControllerPurpose : ProofPurpose
     {
-        public ControllerProofPurpose(string term) : base(term)
+        public ControllerPurpose(string term) : base(term)
         {
         }
 
@@ -16,14 +20,68 @@ namespace W3C.CCG.LinkedDataProofs.Purposes
         public override async Task<ValidationResult> ValidateAsync(JToken proof, ProofOptions options)
         {
             var result = await base.ValidateAsync(proof, options);
-            if (!result.Valid)
+
+            var verificationMethodId = Options.VerificationMethod["id"].ToString();
+            var controllerId = Controller ?? GetVerificationMethod() ??
+                throw new ProofValidationException("Controller or VerificationMethod not found");
+
+            var framed = JsonLdProcessor.Frame(
+                controllerId,
+                new JObject
+                {
+                    { "@context", Constants.SECURITY_CONTEXT_V2_URL },
+                    { "id", controllerId },
+                    { Term, new JObject
+                        {
+                            { "@embed", "@never" },
+                            { "id", verificationMethodId }
+                        }
+                    }
+                },
+                new JsonLdProcessorOptions { CompactToRelative = false, DocumentLoader = options.DocumentLoader.Load });
+
+            if (framed[Term] is JArray keys && keys.Any(x => x.ToString() == verificationMethodId))
             {
+                result.Controller = framed["id"].ToString();
                 return result;
             }
 
-            var controller = Controller ?? (options.AdditonalData["verificationMethod"] as JObject)["id"];
-            result.Valid = proof["verificationMethod"]?.Equals(controller) ?? false;
-            return result;
+            throw new ProofValidationException($"Verification method '{verificationMethodId}' not authorized " +
+                $"by controller for proof purpose '{Term}'.");
+        }
+
+        private string GetVerificationMethod()
+        {
+            if (Options?.VerificationMethod["controller"] != null)
+            {
+                switch (Options.VerificationMethod["controller"].Type)
+                {
+                    case JTokenType.String: return Options.VerificationMethod["controller"].ToString();
+                    case JTokenType.Object: return Options.VerificationMethod["controller"]["id"]?.ToString();
+                    default:
+                        break;
+                }
+            }
+            throw new ProofValidationException("Verification Method not found");
+        }
+    }
+
+    public class ProofValidationException : Exception
+    {
+        public ProofValidationException()
+        {
+        }
+
+        public ProofValidationException(string message) : base(message)
+        {
+        }
+
+        public ProofValidationException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
+        protected ProofValidationException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
         }
     }
 }

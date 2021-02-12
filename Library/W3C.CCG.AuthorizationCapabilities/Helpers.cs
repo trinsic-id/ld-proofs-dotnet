@@ -20,15 +20,14 @@ namespace W3C.CCG.AuthorizationCapabilities
         {
             await Task.Yield();
 
-            if (document["@context"]?.Value<string>() == Constants.SECURITY_CONTEXT_V2_URL)
+            if (document.Type == JTokenType.Object &&
+                document["@context"]?.Value<string>() == Constants.SECURITY_CONTEXT_V2_URL &&
+                !isRoot)
             {
-                if (!isRoot)
-                {
-                    return document as JObject;
-                }
+                return document as JObject;
             }
 
-            return JsonLdProcessor.Compact(document["id"], Constants.SECURITY_CONTEXT_V2_URL, options);
+            return JsonLdProcessor.Compact(document, Constants.SECURITY_CONTEXT_V2_URL, options);
         }
     }
 }

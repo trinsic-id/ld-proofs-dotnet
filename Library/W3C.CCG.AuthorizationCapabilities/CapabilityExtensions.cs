@@ -135,6 +135,12 @@ namespace W3C.CCG.AuthorizationCapabilities
 
         public static IEnumerable<JToken> GetCapabilityChain(JToken capability)
         {
+            if (capability["parentCapability"] == null)
+            {
+                // root capability has no chain
+                return Array.Empty<JToken>();
+            }
+
             var result = GetDelegationProofs(capability);
 
             if (!result.Any())
@@ -331,7 +337,15 @@ namespace W3C.CCG.AuthorizationCapabilities
                     $"of {maxChainLength}.");
             }
 
-            // TODO: Complete validation
+            var uniqueSet = new List<string>();
+
+            // ensure there is no cycle in the chain (including `capability` itself; so
+            // compare against `capabilityChain.length + 1`)
+            uniqueSet.Add(capability["id"].ToString());
+            if (uniqueSet.Count != (capabilityChain.Count() + 1))
+            {
+                throw new Exception("The capabability chain contains a cycle.");
+            }
         }
     }
 }

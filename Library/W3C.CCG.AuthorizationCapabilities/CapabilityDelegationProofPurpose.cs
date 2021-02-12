@@ -4,7 +4,7 @@ using W3C.CCG.LinkedDataProofs.Purposes;
 
 namespace W3C.CCG.AuthorizationCapabilities
 {
-    public class CapabilityDelegationProofPurpose : ControllerProofPurpose
+    public class CapabilityDelegationProofPurpose : ControllerPurpose
     {
         public CapabilityDelegationProofPurpose() : base("capabilityDelegation")
         {

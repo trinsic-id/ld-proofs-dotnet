@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using W3C.CCG.DidCore;
 
 namespace W3C.CCG.LinkedDataProofs.Purposes
 {
@@ -12,11 +12,17 @@ namespace W3C.CCG.LinkedDataProofs.Purposes
             Term = term ?? throw new ArgumentNullException(nameof(term), "this field is required");
         }
 
+        public PurposeOptions Options { get; set; } = new PurposeOptions();
+
         public string Term { get; }
 
         public virtual Task<ValidationResult> ValidateAsync(JToken proof, ProofOptions options)
         {
-            return Task.FromResult(new ValidationResult { Valid = proof["proofPurpose"].Equals(Term) });
+            if (proof["proofPurpose"]?.ToString() == Term)
+            {
+                return Task.FromResult(new ValidationResult());
+            }
+            throw new ProofValidationException($"Invalid proof purpose. Expected '{Term}', found '{proof["proofPurpose"]}'");
         }
 
         public virtual JObject Update(JObject proof)
@@ -27,14 +33,14 @@ namespace W3C.CCG.LinkedDataProofs.Purposes
 
         public virtual bool Match(JObject proof)
         {
-            return true;
+            return proof["proofPurpose"]?.ToString() == Term;
         }
     }
 
     public class ValidationResult
     {
         public string Controller { get; set; }
-        public bool Valid { get; set; }
         public string Invoker { get; set; }
+        public IEnumerable<string> CapabilityChain { get; set; }
     }
 }
