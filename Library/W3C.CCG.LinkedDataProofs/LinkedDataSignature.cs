@@ -114,8 +114,8 @@ namespace W3C.CCG.LinkedDataProofs
 
             var sha256 = SHA256.Create();
 
-            return sha256.ComputeHash(Encoding.UTF8.GetBytes(string.Join(string.Empty, c14nProofOptions)))
-                .Concat(sha256.ComputeHash(Encoding.UTF8.GetBytes(string.Join(string.Empty, c14nDocument))))
+            return sha256.ComputeHash(Encoding.UTF8.GetBytes(c14nProofOptions))
+                .Concat(sha256.ComputeHash(Encoding.UTF8.GetBytes(c14nDocument)))
                 .ToArray();
         }
 

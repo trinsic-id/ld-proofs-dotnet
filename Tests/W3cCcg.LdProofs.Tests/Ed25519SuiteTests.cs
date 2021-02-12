@@ -21,7 +21,7 @@ namespace W3cCcg.LdProofs.Tests
 
         public MockDataFixture Mock { get; }
 
-        [Fact(DisplayName = "Create proof valid key")]
+        [Fact(DisplayName = "Create proof with valid key")]
         public async Task CreateProofRandomKey()
         {
             var aliceKey = new Ed25519VerificationKey2018(Mock.Alice_Keys.VerificationMethod.First() as JObject);
@@ -94,8 +94,7 @@ namespace W3cCcg.LdProofs.Tests
             {
                 Suite = new Ed25519Signature2018
                 {
-                    Signer = signer,
-                    VerificationMethod = "did:example:alice#keys-1"
+                    Signer = signer
                 },
                 Purpose = new AssertionProofPurpose(),
                 DocumentLoader = documentLoader
