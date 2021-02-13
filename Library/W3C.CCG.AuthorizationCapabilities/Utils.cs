@@ -11,8 +11,30 @@ using W3C.CCG.SecurityVocabulary;
 
 namespace W3C.CCG.AuthorizationCapabilities
 {
-    public static class CapabilityExtensions
+    public static class Utils
     {
+        /// <summary>
+        /// Fetches a JSON-LD document from a URL and, if necessary, compacts it to
+        /// the security v2 context.
+        /// </summary>
+        /// <param name="document"></param>
+        /// <param name="isRoot"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public static async Task<JObject> FetchInSecurityContextAsync(JToken document, bool isRoot = false, JsonLdProcessorOptions options = null)
+        {
+            await Task.Yield();
+
+            if (document.Type == JTokenType.Object &&
+                document["@context"]?.Value<string>() == Constants.SECURITY_CONTEXT_V2_URL &&
+                !isRoot)
+            {
+                return document as JObject;
+            }
+
+            return JsonLdProcessor.Compact(document, Constants.SECURITY_CONTEXT_V2_URL, options);
+        }
+
         /// <summary>
         /// Retrieves the authorized delegators from a capability.
         /// </summary>
@@ -36,6 +58,23 @@ namespace W3C.CCG.AuthorizationCapabilities
             }
 
             return new[] { capability.Delegator ?? capability.Id };
+        }
+
+        /// <summary>
+        /// Creates a `capabilityChain` for delegating the given capability.
+        /// </summary>
+        /// <param name="capability"></param>
+        /// <param name="processorOptions"></param>
+        /// <returns></returns>
+        public static Task<IEnumerable<string>> ComputeCapabilityChainAsync(JObject capability, JsonLdProcessorOptions processorOptions)
+        {
+            if (capability["parentCapability"] == null)
+            {
+                throw new Exception("Cannot compute capability chain; capability has no 'parentCapability");
+            }
+
+            // TODO
+            throw new NotImplementedException("Cannot compute capability chain.");
         }
 
         /// <summary>
@@ -165,7 +204,7 @@ namespace W3C.CCG.AuthorizationCapabilities
         /// </summary>
         /// <param name="capability"></param>
         /// <returns></returns>
-        public static async Task<JToken> VerifyCapabilityChain(JToken capability, PurposeOptions validateOptions, JsonLdProcessorOptions options = null)
+        public static async Task<JToken> VerifyCapabilityChain(JToken capability, PurposeOptions purposeOptions, JsonLdProcessorOptions options = null)
         {
             /* Verification process is:
                 1. Fetch capability if only its ID was passed.
@@ -190,7 +229,7 @@ namespace W3C.CCG.AuthorizationCapabilities
             */
 
             // 1. Fetch capability if only its ID was passed.
-            capability = await Helpers.FetchInSecurityContextAsync(capability, false, options);
+            capability = await FetchInSecurityContextAsync(capability, false, options);
             //capability = new CapabilityDelegation(cap as JObject);
 
             // TODO: Add allowed action validation
@@ -209,15 +248,15 @@ namespace W3C.CCG.AuthorizationCapabilities
             var rootCapability = isRoot ? capability : capabilityChain.First();
             capabilityChain = capabilityChain.Skip(1).ToArray();
 
-            rootCapability = await Helpers.FetchInSecurityContextAsync(rootCapability, isRoot, null);
+            rootCapability = await Utils.FetchInSecurityContextAsync(rootCapability, isRoot, null);
 
             // 4.1. Check the expected target, if one was specified.
-            if (validateOptions.ExpectedTarget != null)
+            if (purposeOptions.ExpectedTarget != null)
             {
                 var target = GetTarget(rootCapability);
-                if (target != validateOptions.ExpectedTarget)
+                if (target != purposeOptions.ExpectedTarget)
                 {
-                    throw new Exception($"Expected target ({validateOptions.ExpectedTarget}) does not match " +
+                    throw new Exception($"Expected target ({purposeOptions.ExpectedTarget}) does not match " +
                         $"root capability target({target}).");
                 }
             }
@@ -233,11 +272,11 @@ namespace W3C.CCG.AuthorizationCapabilities
 
             // ensure that the invocation target matches the root capability or,
             // if `expectedRootCapability` is present, that it matches that
-            if (validateOptions.ExpectedRootCapability != null)
+            if (purposeOptions.ExpectedRootCapability != null)
             {
-                if (validateOptions.ExpectedRootCapability != rootCapability["id"].Value<string>())
+                if (purposeOptions.ExpectedRootCapability != rootCapability["id"].Value<string>())
                 {
-                    throw new Exception($"Expected root capability ({validateOptions.ExpectedRootCapability}) does not " +
+                    throw new Exception($"Expected root capability ({purposeOptions.ExpectedRootCapability}) does not " +
                         $"match actual root capability({rootCapability["id"]}).");
                 }
             }
@@ -282,7 +321,7 @@ namespace W3C.CCG.AuthorizationCapabilities
                 // context this code uses) so we can process it cleanly and then
                 // verifies the capability delegation proof on `capability`. This allows
                 // capabilities to be expressed using custom contexts.
-                cap = await Helpers.FetchInSecurityContextAsync(cap, false, options);
+                cap = await FetchInSecurityContextAsync(cap, false, options);
 
                 documentLoader.AddCached(cap["id"].Value<string>(), cap as JObject);
 
@@ -307,17 +346,17 @@ namespace W3C.CCG.AuthorizationCapabilities
             for (int i = 0; i < capabilityChain.Count(); i++)
             {
                 var cap = capabilityChain.ElementAt(i);
-                cap = await Helpers.FetchInSecurityContextAsync(cap, false, options);
+                cap = await FetchInSecurityContextAsync(cap, false, options);
 
-                var verifyResult = LdSignatures.VerifyAsync(cap, new SignatureOptions
+                var verifyResult = LdSignatures.VerifyAsync(cap, new ProofOptions
                 {
-                    Suite = validateOptions.Suite,
+                    Suite = purposeOptions.Suite,
                     Purpose = new CapabilityDelegationProofPurpose
                     {
                         Options = new PurposeOptions
                         {
-                            ExpectedTarget = validateOptions.ExpectedTarget,
-                            ExpectedRootCapability = validateOptions.ExpectedRootCapability
+                            ExpectedTarget = purposeOptions.ExpectedTarget,
+                            ExpectedRootCapability = purposeOptions.ExpectedRootCapability
                         },
                         VerifiedParentCapability = verifiedParentCapability
                     },

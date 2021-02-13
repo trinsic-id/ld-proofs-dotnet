@@ -24,7 +24,6 @@
   <ItemGroup>
     <None Remove="TestData\example-doc-with-beta-invocation.json" />
     <None Remove="TestData\ed25519-carol-keys.json" />
-    <None Remove="TestData\ed25519-diana-keys.json" />
     <None Remove="TestData\did-doc-gamma.json" />
     <None Remove="TestData\did-doc-alpha.json" />
     <None Remove="TestData\did-doc-beta.json" />
@@ -38,7 +37,6 @@
   <ItemGroup>
     <Content Include="TestData\example-doc-with-beta-invocation.json" />
     <Content Include="TestData\ed25519-carol-keys.json" />
-    <Content Include="TestData\ed25519-diana-keys.json" />
     <Content Include="TestData\did-doc-gamma.json" />
     <Content Include="TestData\did-doc-alpha.json" />
     <Content Include="TestData\did-doc-beta.json" />
@@ -66,6 +64,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestData\example-doc-with-alpha-invocation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\ed25519-diana-keys.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

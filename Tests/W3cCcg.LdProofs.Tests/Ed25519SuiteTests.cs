@@ -29,7 +29,7 @@ namespace W3cCcg.LdProofs.Tests
 
             var signedDocument = await LdSignatures.SignAsync(
                 Mock.ExampleDoc,
-                new SignatureOptions
+                new ProofOptions
                 {
                     Suite = new Ed25519Signature2018
                     {
@@ -54,10 +54,10 @@ namespace W3cCcg.LdProofs.Tests
 
             var result = await LdSignatures.VerifyAsync(
                 document: cap,
-                options: new SignatureOptions
+                options: new ProofOptions
                 {
                     Suite = new Ed25519Signature2018(),
-                    Purpose = new CapabilityInvocationProofPurpose(new PurposeOptions
+                    Purpose = new CapabilityInvocation(new PurposeOptions
                     {
                         ExpectedTarget = Mock.RootCapAlpha.Id
                     }),
@@ -74,7 +74,7 @@ namespace W3cCcg.LdProofs.Tests
 
             await Assert.ThrowsAsync<ProofValidationException>(() => LdSignatures.VerifyAsync(
                 document: cap,
-                options: new SignatureOptions
+                options: new ProofOptions
                 {
                     Suite = new Ed25519Signature2018(),
                     Purpose = new AssertionMethodPurpose(),
@@ -85,42 +85,37 @@ namespace W3cCcg.LdProofs.Tests
         [Fact(DisplayName = "Verify proof")]
         public async Task VerifyProofRandomKey()
         {
-            var didDoc = new DidDocument(Utilities.LoadJson("TestData/ed25519-alice-keys.json"));
-            var key = didDoc.VerificationMethod.First() as VerificationMethod;
-            var signer = new Ed25519VerificationKey2018(key);
+            var signer = new Ed25519VerificationKey2018(Mock.Diana_Keys.VerificationMethod.First() as JObject);
 
-            var documentLoader = CachingDocumentLoader.Default;
-            documentLoader.AddCached(key.Id, didDoc);
-
-            var document = new DidDocument { Id = key.Controller };
+            var document = new DidDocument { Id = signer.Controller };
 
             var signedDocument = await LdSignatures.SignAsync(
                 document,
-                new SignatureOptions
+                new ProofOptions
                 {
                     Suite = new Ed25519Signature2018
                     {
                         Signer = signer,
-                        VerificationMethod = key.Id
+                        VerificationMethod = signer.Id
                     },
                     Purpose = new AssertionMethodPurpose(),
-                    DocumentLoader = documentLoader
+                    DocumentLoader = Mock.DocumentLoader
                 });
 
-            signedDocument["@context"] = new JArray(new[] { Constants.DID_V1_URL, Constants.SECURITY_CONTEXT_V2_URL });
-
-            var result = await LdSignatures.VerifyAsync(signedDocument, new SignatureOptions
+            signedDocument["@context"] = new JArray(new[]
             {
-                Suite = new Ed25519Signature2018
-                {
-                    Signer = signer
-                },
-                Purpose = new AssertionMethodPurpose(),
-                DocumentLoader = documentLoader
+                Constants.DID_V1_URL,
+                Constants.SECURITY_CONTEXT_V2_URL
             });
 
-            Assert.NotNull(document);
-            Assert.NotNull(document["proof"]);
+            var result = await LdSignatures.VerifyAsync(signedDocument, new ProofOptions
+            {
+                Suite = new Ed25519Signature2018(),
+                Purpose = new AssertionMethodPurpose(),
+                DocumentLoader = Mock.DocumentLoader
+            });
+
+            Assert.NotNull(result);
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Runtime.Serialization;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using VDS.RDF.JsonLd;
@@ -63,25 +61,6 @@ namespace W3C.CCG.LinkedDataProofs.Purposes
                 }
             }
             throw new ProofValidationException("Verification Method not found");
-        }
-    }
-
-    public class ProofValidationException : Exception
-    {
-        public ProofValidationException()
-        {
-        }
-
-        public ProofValidationException(string message) : base(message)
-        {
-        }
-
-        public ProofValidationException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-
-        protected ProofValidationException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
         }
     }
 }

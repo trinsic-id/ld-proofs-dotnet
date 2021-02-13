@@ -16,21 +16,11 @@ namespace W3C.CCG.LinkedDataProofs
 
         public abstract Task<JToken> CreateProofAsync(ProofOptions options);
 
-        public abstract Task<VerifyProofResult> VerifyProofAsync(JToken proof, ProofOptions options);
+        public abstract Task<ValidationResult> VerifyProofAsync(JToken proof, ProofOptions options);
 
         public virtual Task<bool> MatchProofAsync(MatchProofOptions options)
         {
             return Task.FromResult(options.TypeName == TypeName);
         }
-    }
-
-    public class MatchProofOptions
-    {
-        public string TypeName { get; set; }
-    }
-
-    public class VerifyProofResult
-    {
-
     }
 }

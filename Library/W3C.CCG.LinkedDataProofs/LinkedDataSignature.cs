@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using VDS.RDF.JsonLd;
 using W3C.CCG.DidCore;
+using W3C.CCG.LinkedDataProofs.Purposes;
 using W3C.CCG.SecurityVocabulary;
 
 namespace W3C.CCG.LinkedDataProofs
@@ -21,7 +22,7 @@ namespace W3C.CCG.LinkedDataProofs
         /// Gets or sets the initial proof object to use.
         /// Can be null.
         /// </summary>
-        public JObject Proof { get; set; }
+        public JObject InitialProof { get; set; }
 
         /// <summary>
         /// Gets or sets the verification method to use for this proof
@@ -29,7 +30,7 @@ namespace W3C.CCG.LinkedDataProofs
         public JToken VerificationMethod { get; set; }
 
         /// <summary>
-        /// Gets or sets the date to use in this proof
+        /// Gets or sets the 'created' date to use in this proof
         /// </summary>
         public DateTime? Date { get; set; }
 
@@ -43,8 +44,8 @@ namespace W3C.CCG.LinkedDataProofs
             if (VerificationMethod == null) throw new ArgumentNullException(nameof(VerificationMethod), "VerificationMethod must be specified.");
             if (TypeName == null) throw new ArgumentNullException(nameof(TypeName), "TypeName must be specified.");
 
-            var proof = Proof != null
-                ? JsonLdProcessor.Compact(Proof, Constants.SECURITY_CONTEXT_V2_URL, new JsonLdProcessorOptions { DocumentLoader = options.DocumentLoader.Load, CompactToRelative = false })
+            var proof = InitialProof != null
+                ? JsonLdProcessor.Compact(InitialProof, Constants.SECURITY_CONTEXT_V2_URL, new JsonLdProcessorOptions { DocumentLoader = options.DocumentLoader.Load, CompactToRelative = false })
                 : new JObject { { "@context", Constants.SECURITY_CONTEXT_V2_URL } };
 
             proof["type"] = TypeName;
@@ -54,36 +55,51 @@ namespace W3C.CCG.LinkedDataProofs
             // allow purpose to update the proof; the `proof` is in the
             // SECURITY_CONTEXT_URL `@context` -- therefore the `purpose` must
             // ensure any added fields are also represented in that same `@context`
-            proof = options.Purpose.Update(proof);
+            proof = await options.Purpose.UpdateAsync(proof, options);
 
             // create data to sign
             var verifyData = CreateVerifyData(proof, options);
 
             // sign data
-            proof = await SignAsync(verifyData, proof, options);
+            proof = await SignAsync((ByteArray)verifyData, proof, options);
 
             return proof;
         }
 
-        protected abstract Task<JObject> SignAsync(byte[] verifyData, JObject proof, ProofOptions options);
-
-        public override async Task<VerifyProofResult> VerifyProofAsync(JToken proof, ProofOptions options)
+        public override async Task<ValidationResult> VerifyProofAsync(JToken proof, ProofOptions options)
         {
             var verifyData = CreateVerifyData(proof as JObject, options);
             var verificationMethod = GetVerificationMethod(proof as JObject, options);
 
-            await VerifyAsync(verifyData, proof, verificationMethod, options);
+            await VerifyAsync((ByteArray)verifyData, proof, verificationMethod, options);
 
             // Validate proof purpose
             options.Purpose.Options.VerificationMethod = new VerificationMethod(verificationMethod);
-            var result = await options.Purpose.ValidateAsync(proof, options);
-
-            return new VerifyProofResult();
+            return await options.Purpose.ValidateAsync(proof, options);
         }
 
-        protected abstract Task VerifyAsync(byte[] verifyData, JToken proof, JToken verificationMethod, ProofOptions options);
+        /// <summary>
+        /// Signs the verification data for the current proof
+        /// </summary>
+        /// <param name="verifyData"></param>
+        /// <param name="proof"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        protected abstract Task<JObject> SignAsync(IVerifyData verifyData, JObject proof, ProofOptions options);
 
-        protected virtual JObject GetVerificationMethod(JObject proof, ProofOptions options)
+        /// <summary>
+        /// Verifies the verification data for the current proof
+        /// </summary>
+        /// <param name="verifyData"></param>
+        /// <param name="proof"></param>
+        /// <param name="verificationMethod"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        protected abstract Task VerifyAsync(IVerifyData verifyData, JToken proof, JToken verificationMethod, ProofOptions options);
+
+        #region Private methods
+
+        private JObject GetVerificationMethod(JObject proof, ProofOptions options)
         {
             var verificationMethod = proof["verificationMethod"] ?? throw new Exception("No 'verificationMethod' found in proof.");
 
@@ -95,7 +111,7 @@ namespace W3C.CCG.LinkedDataProofs
                     { "@embed", "@always" },
                     { "id", verificationMethod }
                 },
-                new JsonLdProcessorOptions { FrameExpansion = false, DocumentLoader = options.DocumentLoader.Load, CompactToRelative = false });
+                new JsonLdProcessorOptions { DocumentLoader = options.DocumentLoader.Load, CompactToRelative = false });
 
             if (frame == null || frame["id"] == null)
             {
@@ -110,10 +126,21 @@ namespace W3C.CCG.LinkedDataProofs
             return frame;
         }
 
-        protected virtual byte[] CreateVerifyData(JObject proof, ProofOptions options)
+        private string CanonizeProof(JObject proof)
         {
-            var c14nProofOptions = CanonizeProof(proof, options);
-            var c14nDocument = Canonize(options.Input, options);
+            proof = proof.DeepClone() as JObject;
+
+            proof.Remove("jws");
+            proof.Remove("signatureValue");
+            proof.Remove("proofValue");
+
+            return Helpers.Canonize(proof, new JsonLdProcessorOptions());
+        }
+
+        private byte[] CreateVerifyData(JObject proof, ProofOptions options)
+        {
+            var c14nProofOptions = CanonizeProof(proof);
+            var c14nDocument = Helpers.Canonize(options.Input, new JsonLdProcessorOptions());
 
             var sha256 = SHA256.Create();
 
@@ -122,20 +149,6 @@ namespace W3C.CCG.LinkedDataProofs
                 .ToArray();
         }
 
-        protected virtual string Canonize(JToken document, ProofOptions options)
-        {
-            return Helpers.Canonize(document, new JsonLdProcessorOptions());
-        }
-
-        protected virtual string CanonizeProof(JObject proof, ProofOptions options)
-        {
-            proof = proof.DeepClone() as JObject;
-
-            proof.Remove("jws");
-            proof.Remove("signatureValue");
-            proof.Remove("proofValue");
-
-            return Canonize(proof, options);
-        }
+        #endregion
     }
 }

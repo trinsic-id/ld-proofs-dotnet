@@ -32,16 +32,16 @@ namespace W3C.CCG.LinkedDataProofs.Purposes
             return base.ValidateAsync(proof, options);
         }
 
-        public override JObject Update(JObject proof)
+        public override async Task<JObject> UpdateAsync(JObject proof, ProofOptions options)
         {
-            proof = base.Update(proof);
+            proof = await base.UpdateAsync(proof, options);
 
             proof["challenge"] = Challenge ?? throw new Exception("'challenge' must be specified.");
+
             if (Domain != null)
             {
                 proof["domain"] = Domain;
             }
-
             return proof;
         }
     }

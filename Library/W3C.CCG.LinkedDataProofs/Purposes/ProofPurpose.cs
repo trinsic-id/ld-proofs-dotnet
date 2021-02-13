@@ -25,10 +25,10 @@ namespace W3C.CCG.LinkedDataProofs.Purposes
             throw new ProofValidationException($"Invalid proof purpose. Expected '{Term}', found '{proof["proofPurpose"]}'");
         }
 
-        public virtual JObject Update(JObject proof)
+        public virtual Task<JObject> UpdateAsync(JObject proof, ProofOptions options)
         {
             proof["proofPurpose"] = Term;
-            return proof;
+            return Task.FromResult(proof);
         }
 
         public virtual bool Match(JObject proof)

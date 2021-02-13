@@ -9,11 +9,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9A6E1806
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "W3C.CCG.DidCore", "Library\W3C.CCG.DidCore\W3C.CCG.DidCore.csproj", "{34FEEBD2-698D-40EC-BE54-DFB95F13919D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "W3C.CCG.SecurityVocabulary", "Library\W3C.CCG.SecurityVocabulary\W3C.CCG.SecurityVocabulary.csproj", "{BE8BB061-F097-4C6E-BCDF-60C98E03919B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "W3C.CCG.SecurityVocabulary", "Library\W3C.CCG.SecurityVocabulary\W3C.CCG.SecurityVocabulary.csproj", "{BE8BB061-F097-4C6E-BCDF-60C98E03919B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "W3C.CCG.LinkedDataProofs", "Library\W3C.CCG.LinkedDataProofs\W3C.CCG.LinkedDataProofs.csproj", "{28F6A788-5B34-4EC9-B44A-534C3A21A9B0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "W3C.CCG.LinkedDataProofs.Bbs", "Library\W3C.CCG.LinkedDataProofs.Bbs\W3C.CCG.LinkedDataProofs.Bbs.csproj", "{03DD3C03-E797-44AB-9D27-34DDBFDE542E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "W3C.CCG.LinkedDataProofs.Bbs", "Library\W3C.CCG.LinkedDataProofs.Bbs\W3C.CCG.LinkedDataProofs.Bbs.csproj", "{03DD3C03-E797-44AB-9D27-34DDBFDE542E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "W3C.CCG.VerifiableCredentials", "Library\W3C.CCG.VerifiableCredentials\W3C.CCG.VerifiableCredentials.csproj", "{F55BD409-6640-405D-A778-EC11E04C91FE}"
 EndProject

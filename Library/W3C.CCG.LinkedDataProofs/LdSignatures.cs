@@ -18,7 +18,7 @@ namespace W3C.CCG.LinkedDataProofs
         /// <param name="document"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static async Task<JToken> SignAsync(JToken document, SignatureOptions options)
+        public static async Task<JToken> SignAsync(JToken document, ProofOptions options)
         {
             if (options.Purpose is null) throw new Exception("Proof purpose is required.");
             if (options.Suite is null) throw new Exception("Suite is required.");
@@ -43,7 +43,8 @@ namespace W3C.CCG.LinkedDataProofs
                 Input = input as JObject,
                 Purpose = options.Purpose,
                 Suite = options.Suite,
-                CompactProof = options.CompactProof
+                CompactProof = options.CompactProof,
+                DocumentLoader = options.DocumentLoader
             });
 
             // TODO: Check compaction again
@@ -59,9 +60,9 @@ namespace W3C.CCG.LinkedDataProofs
         /// <param name="document"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static async Task<VerifyProofResult> VerifyAsync(JToken document, SignatureOptions options)
+        public static async Task<ValidationResult> VerifyAsync(JToken document, ProofOptions options)
         {
-            if (options.Purpose is null) throw new Exception("Proof purpose is required.");
+            if (options.Purpose is null) throw new Exception("Purpose is required.");
             if (options.Suite is null) throw new Exception("Suite is required.");
 
             // shallow copy to allow for removal of proof set prior to canonize
@@ -84,14 +85,14 @@ namespace W3C.CCG.LinkedDataProofs
             return result;
         }
 
-        private static (JToken proof, JToken document) GetProof(JToken document, SignatureOptions options)
+        private static (JToken proof, JToken document) GetProof(JToken document, ProofOptions options)
         {
             if (options.CompactProof)
             {
                 document = JsonLdProcessor.Compact(
-                    document,
-                    Constants.SECURITY_CONTEXT_V2_URL,
-                    new JsonLdProcessorOptions
+                    input: document,
+                    context: Constants.SECURITY_CONTEXT_V2_URL,
+                    options: new JsonLdProcessorOptions
                     {
                         DocumentLoader = options.DocumentLoader.Load,
                         CompactToRelative = false
@@ -110,18 +111,5 @@ namespace W3C.CCG.LinkedDataProofs
 
             return (proof, document);
         }
-    }
-
-    public class SignatureOptions
-    {
-        public LinkedDataProof Suite { get; set; }
-
-        public ProofPurpose Purpose { get; set; }
-
-        public bool CompactProof { get; set; } = true;
-
-        public IDocumentLoader DocumentLoader { get; set; } = CachingDocumentLoader.Default;
-
-        public IDictionary<string, JToken> AdditonalData { get; set; }
     }
 }

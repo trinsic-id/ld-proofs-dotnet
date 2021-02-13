@@ -19,6 +19,7 @@ namespace W3cCcg.LdProofs.Tests
         {
             Alice_Keys = new DidDocument(Utilities.LoadJson("TestData/ed25519-alice-keys.json"));
             Bob_Keys = new DidDocument(Utilities.LoadJson("TestData/ed25519-bob-keys.json"));
+            Diana_Keys = new DidDocument(Utilities.LoadJson("TestData/ed25519-diana-keys.json"));
 
             ExampleDoc = Utilities.LoadJson("TestData/example-doc.json");
             ExampleDocAlphaInvocation = Utilities.LoadJson("TestData/example-doc-with-alpha-invocation.json");
@@ -40,12 +41,16 @@ namespace W3cCcg.LdProofs.Tests
                 .AddCached(Bob_Keys.Id, Bob_Keys)
                 .AddCached((Bob_Keys.CapabilityDelegation.First() as VerificationMethod).Id, Bob_Keys)
                 .AddCached((Bob_Keys.CapabilityInvocation.First() as VerificationMethod).Id, Bob_Keys)
+                .AddCached(Diana_Keys.Id, Diana_Keys)
+                .AddCached((Diana_Keys.VerificationMethod.First() as VerificationMethod).Id, Diana_Keys)
+                .AddCached((Diana_Keys.CapabilityDelegation.First() as VerificationMethod).Id, Diana_Keys)
                 .AddCached(ExampleDoc["id"].ToString(), ExampleDoc)
                 .AddCached(RootCapAlpha.Id, RootCapAlpha);
         }
 
         public DidDocument Alice_Keys { get; }
         public DidDocument Bob_Keys { get; }
+        public DidDocument Diana_Keys { get; }
         public JObject ExampleDoc { get; }
         public JObject ExampleDocAlphaInvocation { get; }
         public IDocumentLoader DocumentLoader { get; }

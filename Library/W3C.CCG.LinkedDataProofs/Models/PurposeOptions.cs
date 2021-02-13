@@ -7,7 +7,6 @@ namespace W3C.CCG.LinkedDataProofs.Purposes
     {
         public string CapabilityAction { get; set; }
         public string ExpectedAction { get; set; }
-        public IJEnumerable<JToken> CapabilityChain { get; set; }
         public string Capability { get; set; }
         public string ExpectedTarget { get; set; }
         public string ExpectedRootCapability { get; set; }

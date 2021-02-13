@@ -1,7 +1,7 @@
 {
     "@context": "https://w3id.org/security/v2",
     "id": "https://example.com/i/diana",
-    "capabilityInvocation": [
+    "verificationMethod": [
         {
             "id": "https://example.com/i/diana/keys/1",
             "type": "Ed25519VerificationKey2018",
@@ -10,6 +10,9 @@
             "privateKeyBase58": "4M2Ly3iFehEffeoYwebkiRbeb99WbGJzv3hzw4jrtRXcwSF4BKWM9z84p5es8GYYSgt7N1RAAp8HhBLZiRbxaKHq"
         }
     ],
+    "capabilityInvocation": [ "https://example.com/i/diana/keys/1" ],
+    "assertionMethod": [ "https://example.com/i/diana/keys/1" ],
+    "authentication": [ "https://example.com/i/diana/keys/1" ],
     "capabilityDelegation": [
         {
             "id": "https://example.com/i/diana/keys/2",

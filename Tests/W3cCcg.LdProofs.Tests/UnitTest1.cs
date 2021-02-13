@@ -18,13 +18,13 @@ namespace W3cCcg.LdProofs.Tests
         {
             var doc = Utilities.LoadJson("TestData/example-doc.json");
 
-            var signedDoc = await LdSignatures.SignAsync(doc, new SignatureOptions
+            var signedDoc = await LdSignatures.SignAsync(doc, new ProofOptions
             {
                 Suite = new MockSuite
                 {
                     VerificationMethod = "did:example:bob"
                 },
-                Purpose = new CapabilityInvocationProofPurpose()
+                Purpose = new CapabilityInvocation()
                 {
                     Controller = "did:example:bob",
                     Options = new PurposeOptions
@@ -61,7 +61,7 @@ namespace W3cCcg.LdProofs.Tests
         {
             var doc = Utilities.LoadJson("TestData/example-doc.json");
 
-            var data = await LdSignatures.SignAsync(doc, new SignatureOptions
+            var data = await LdSignatures.SignAsync(doc, new ProofOptions
             {
                 Suite = new MockSuite
                 {

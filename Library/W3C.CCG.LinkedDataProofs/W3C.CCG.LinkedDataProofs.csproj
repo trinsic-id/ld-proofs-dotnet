@@ -23,5 +23,6 @@
     <Folder Include="Purposes\" />
     <Folder Include="Suites\" />
     <Folder Include="Suites\Ed25519\" />
+    <Folder Include="Models\" />
   </ItemGroup>
 </Project>

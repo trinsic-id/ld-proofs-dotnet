@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using W3C.CCG.LinkedDataProofs;
+using W3C.CCG.LinkedDataProofs.Purposes;
 
 namespace W3cCcg.LdProofs.Tests
 {
@@ -11,7 +12,7 @@ namespace W3cCcg.LdProofs.Tests
         {
         }
 
-        public override Task<VerifyProofResult> VerifyProofAsync(JToken proof, ProofOptions options)
+        public override Task<ValidationResult> VerifyProofAsync(JToken proof, ProofOptions options)
         {
             throw new NotImplementedException();
         }

@@ -85,7 +85,7 @@ namespace W3C.CCG.LinkedDataProofs
         public string Decode(string str)
         {
             byte[] decbuff = Convert.FromBase64String(Repad(str.Replace(",", "=").Replace("-", "+").Replace("_", "+")));
-            return System.Text.Encoding.UTF8.GetString(decbuff);
+            return Encoding.UTF8.GetString(decbuff);
         }
 
         public byte[] DecodeBytes(string str)
