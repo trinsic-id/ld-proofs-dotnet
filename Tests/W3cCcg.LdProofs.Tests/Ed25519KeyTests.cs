@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using W3C.CCG.LinkedDataProofs;
 using W3C.CCG.LinkedDataProofs.Suites;
 using Xunit;
 
@@ -23,7 +24,7 @@ namespace W3cCcg.LdProofs.Tests
             var method = Ed25519VerificationKey2018.Generate();
             var payload = Encoding.UTF8.GetBytes("my message");
 
-            var signature = method.Sign(payload);
+            var signature = method.Sign((ByteArray)payload);
 
             Assert.NotNull(signature);
             Assert.Equal(Chaos.NaCl.Ed25519.SignatureSizeInBytes, signature.Length);
@@ -33,7 +34,7 @@ namespace W3cCcg.LdProofs.Tests
         public void VerifyPayload()
         {
             var method = Ed25519VerificationKey2018.Generate();
-            var payload = Encoding.UTF8.GetBytes("my message");
+            var payload = (ByteArray)Encoding.UTF8.GetBytes("my message");
             var signature = method.Sign(payload);
 
             var verified = method.Verify(signature, payload);

@@ -2,8 +2,6 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using W3C.CCG.DidCore;
 
 namespace W3C.CCG.LinkedDataProofs.Suites
@@ -39,14 +37,18 @@ namespace W3C.CCG.LinkedDataProofs.Suites
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public override byte[] Sign(byte[] input)
+        public override byte[] Sign(IVerifyData input)
         {
             if (PrivateKeyBase58 == null)
             {
                 throw new Exception("Private key not found.");
             }
+            if (input is ByteArray data)
+            {
+                return Chaos.NaCl.Ed25519.Sign(data.Data, Multibase.Base58.Decode(PrivateKeyBase58));
+            }
 
-            return Chaos.NaCl.Ed25519.Sign(input, Multibase.Base58.Decode(PrivateKeyBase58));
+            throw new ArgumentException($"Invalid input type data. Expected '{typeof(ByteArray).Name}', found '{input?.GetType().Name}'");
         }
 
         /// <summary>
@@ -67,14 +69,18 @@ namespace W3C.CCG.LinkedDataProofs.Suites
         /// <param name="signature"></param>
         /// <param name="input"></param>
         /// <returns></returns>
-        public override bool Verify(byte[] signature, byte[] input)
+        public override bool Verify(byte[] signature, IVerifyData input)
         {
             if (PublicKeyBase58 == null)
             {
                 throw new Exception("Public key not found.");
             }
+            if (input is ByteArray data)
+            {
+                return Chaos.NaCl.Ed25519.Verify(signature, data.Data, Multibase.Base58.Decode(PublicKeyBase58));
+            }
 
-            return Chaos.NaCl.Ed25519.Verify(signature, input, Multibase.Base58.Decode(PublicKeyBase58));
+            throw new ArgumentException($"Invalid input type data. Expected '{typeof(ByteArray).Name}', found '{input?.GetType().Name}'");
         }
 
         /// <summary>

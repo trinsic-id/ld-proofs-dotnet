@@ -15,12 +15,12 @@ namespace W3C.CCG.LinkedDataProofs
         {
         }
 
-        public virtual byte[] Sign(byte[] input)
+        public virtual byte[] Sign(IVerifyData input)
         {
             throw new NotImplementedException();
         }
 
-        public virtual bool Verify(byte[] signature, byte[] input)
+        public virtual bool Verify(byte[] signature, IVerifyData input)
         {
             throw new NotImplementedException();
         }

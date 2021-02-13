@@ -35,12 +35,6 @@ namespace W3C.CCG.DidCore
             set => this["id"] = value;
         }
 
-        public IEnumerable<VerificationMethod> PublicKey
-        {
-            get => (IEnumerable<VerificationMethod>)GetVerificationMethods("publicKey");
-            set => this["publicKey"] = new JArray(value);
-        }
-
         public IEnumerable<IVerificationMethod> VerificationMethod
         {
             get => GetVerificationMethods("verificationMethod");
@@ -69,6 +63,12 @@ namespace W3C.CCG.DidCore
         {
             get => GetVerificationMethods("capabilityInvocation");
             set => this["capabilityInvocation"] = new JArray(value);
+        }
+
+        public IEnumerable<IVerificationMethod> KeyAgreement
+        {
+            get => GetVerificationMethods("keyAgreement");
+            set => this["keyAgreement"] = new JArray(value);
         }
 
         public string Controller

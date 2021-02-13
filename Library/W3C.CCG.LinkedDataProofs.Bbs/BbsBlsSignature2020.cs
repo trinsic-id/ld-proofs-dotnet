@@ -1,20 +1,81 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Hyperledger.Ursa.BbsSignatures;
+using Multiformats.Base;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using VDS.RDF.JsonLd;
 using W3C.CCG.LinkedDataProofs;
 
 namespace BbsDataSignatures
 {
-    public class BbsBlsSignature2020 : SignerVerificationMethod
+    public class BbsBlsSignature2020 : LinkedDataSignature
     {
-        public const string Name = "BbsBlsSignature2020";
+        public const string Name = "https://w3c-ccg.github.io/ldp-bbs2020/contexts/v1#BbsBlsSignature2020";
 
-        public BbsBlsSignature2020()
+        public BbsSignatureService SignatureService { get; }
+        public Bls12381G2Key2020 Signer { get; set; }
+
+        public BbsBlsSignature2020() : base(Name)
         {
-            TypeName = Name;
-            this["@context"] = "https://w3c-ccg.github.io/ldp-bbs2020/contexts/v1";
+            SignatureService = new BbsSignatureService();
         }
 
-        public BbsBlsSignature2020(JObject obj) : base(obj)
+        protected override Task<JObject> SignAsync(IVerifyData payload, JObject proof, ProofOptions options)
         {
+            var verifyData = payload as StringArray ?? throw new ArgumentException("Invalid data type");
+
+            if (Signer?.PrivateKeyBase58 == null)
+            {
+                throw new Exception("Private key not found.");
+            }
+
+            var key = new BlsKeyPair(Multibase.Base58.Decode(Signer.PrivateKeyBase58));
+
+            var proofValue = SignatureService.Sign(new SignRequest(key, verifyData.Data));
+            proof["proofValue"] = Convert.ToBase64String(proofValue);
+
+            return Task.FromResult(proof);
+        }
+
+        protected override Task VerifyAsync(IVerifyData payload, JToken proof, JToken verificationMethod, ProofOptions options)
+        {
+            var verifyData = payload as StringArray ?? throw new ArgumentException("Invalid data type");
+
+            if (Signer?.PublicKeyBase58 == null)
+            {
+                throw new Exception("Public key not found.");
+            }
+
+            var key = new BlsKeyPair(Multibase.Base58.Decode(Signer.PublicKeyBase58));
+            var signature = Helpers.FromBase64String(proof["proofValue"]?.ToString() ?? throw new Exception("Proof value not found"));
+
+            var valid = SignatureService.Verify(new VerifyRequest(key, signature, verifyData.Data));
+            if (!valid)
+            {
+                throw new Exception("Invalid signature");
+            }
+            return Task.CompletedTask;
+        }
+
+        protected override IVerifyData CreateVerifyData(JObject proof, ProofOptions options)
+        {
+            var c14nProofOptions = CanonizeProof(proof);
+            var c14nDocument = Helpers.CanonizeStatements(options.Input, new JsonLdProcessorOptions());
+
+            return (StringArray)c14nProofOptions.Concat(c14nDocument).ToArray();
+        }
+
+        private IEnumerable<string> CanonizeProof(JObject proof)
+        {
+            proof = proof.DeepClone() as JObject;
+
+            proof.Remove("jws");
+            proof.Remove("signatureValue");
+            proof.Remove("proofValue");
+
+            return Helpers.CanonizeStatements(proof, new JsonLdProcessorOptions());
         }
     }
 }

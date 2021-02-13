@@ -17,13 +17,13 @@ namespace W3cCcg.LdProofs.Tests
             throw new NotImplementedException();
         }
 
-        protected override Task<JObject> SignAsync(byte[] verifyData, JObject proof, ProofOptions options)
+        protected override Task<JObject> SignAsync(IVerifyData verifyData, JObject proof, ProofOptions options)
         {
-            proof["proofValue"] = Convert.ToBase64String(verifyData);
+            proof["proofValue"] = Convert.ToBase64String((verifyData as ByteArray).Data);
             return Task.FromResult(proof);
         }
 
-        protected override Task VerifyAsync(byte[] verifyData, JToken proof, JToken verificationMethod, ProofOptions options)
+        protected override Task VerifyAsync(IVerifyData verifyData, JToken proof, JToken verificationMethod, ProofOptions options)
         {
             throw new NotImplementedException();
         }

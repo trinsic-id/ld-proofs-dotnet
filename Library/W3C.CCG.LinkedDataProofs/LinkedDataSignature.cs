@@ -137,14 +137,14 @@ namespace W3C.CCG.LinkedDataProofs
             return Helpers.Canonize(proof, new JsonLdProcessorOptions());
         }
 
-        private byte[] CreateVerifyData(JObject proof, ProofOptions options)
+        protected virtual IVerifyData CreateVerifyData(JObject proof, ProofOptions options)
         {
             var c14nProofOptions = CanonizeProof(proof);
             var c14nDocument = Helpers.Canonize(options.Input, new JsonLdProcessorOptions());
 
             var sha256 = SHA256.Create();
 
-            return sha256.ComputeHash(Encoding.UTF8.GetBytes(c14nProofOptions))
+            return (ByteArray)sha256.ComputeHash(Encoding.UTF8.GetBytes(c14nProofOptions))
                 .Concat(sha256.ComputeHash(Encoding.UTF8.GetBytes(c14nDocument)))
                 .ToArray();
         }

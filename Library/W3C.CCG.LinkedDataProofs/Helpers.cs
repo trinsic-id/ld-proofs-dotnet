@@ -66,5 +66,19 @@ namespace W3C.CCG.LinkedDataProofs
 
             return JToken.Parse(stringWriter.ToString());
         }
+
+        /// <summary>
+        /// Converts the specified string, which encodes binary data as base-64 digits, to an equivalent 8-bit unsigned integer array.
+        /// </summary>
+        /// <remarks>
+        /// This method supports URL safe encoded data with or without padding
+        /// </remarks>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static byte[] FromBase64String(string value) => Convert.FromBase64String(
+                // Decode URL safe character
+                value.Replace("-", "+").Replace("_", "/")
+                // Add padding as required by the .NET function
+                .PadRight(value.Length + (4 - value.Length % 4) % 4, '='));
     }
 }
