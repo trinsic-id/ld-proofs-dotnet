@@ -61,8 +61,7 @@ namespace W3C.CCG.LinkedDataProofs
             var verifyData = CreateVerifyData(proof, options);
 
             // sign data
-            proof = await SignAsync((ByteArray)verifyData, proof, options);
-
+            proof = await SignAsync(verifyData, proof, options);
             return proof;
         }
 

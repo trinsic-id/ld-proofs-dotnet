@@ -19,7 +19,7 @@ namespace W3C.CCG.LinkedDataProofs.Suites
         /// <param name="jToken"></param>
         /// <param name="verificationMethod"></param>
         /// <returns></returns>
-        protected override SignerVerificationMethod GetSigner(JToken verificationMethod)
+        protected override ISigner GetSigner(JToken verificationMethod)
         {
             return new Ed25519VerificationKey2018(verificationMethod as JObject);
         }

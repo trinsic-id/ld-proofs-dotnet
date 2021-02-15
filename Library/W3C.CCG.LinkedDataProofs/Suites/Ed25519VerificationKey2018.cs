@@ -6,7 +6,7 @@ using W3C.CCG.DidCore;
 
 namespace W3C.CCG.LinkedDataProofs.Suites
 {
-    public class Ed25519VerificationKey2018 : SignerVerificationMethod
+    public class Ed25519VerificationKey2018 : VerificationMethod, ISigner
     {
         public const string Name = "Ed25519VerificationKey2018";
 
@@ -37,7 +37,7 @@ namespace W3C.CCG.LinkedDataProofs.Suites
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public override byte[] Sign(IVerifyData input)
+        public byte[] Sign(IVerifyData input)
         {
             if (PrivateKeyBase58 == null)
             {
@@ -69,7 +69,7 @@ namespace W3C.CCG.LinkedDataProofs.Suites
         /// <param name="signature"></param>
         /// <param name="input"></param>
         /// <returns></returns>
-        public override bool Verify(byte[] signature, IVerifyData input)
+        public bool Verify(byte[] signature, IVerifyData input)
         {
             if (PublicKeyBase58 == null)
             {

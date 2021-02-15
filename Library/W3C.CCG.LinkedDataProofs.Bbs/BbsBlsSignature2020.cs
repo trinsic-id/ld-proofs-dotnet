@@ -1,4 +1,4 @@
-﻿using Hyperledger.Ursa.BbsSignatures;
+﻿using BbsSignatures;
 using Multiformats.Base;
 using Newtonsoft.Json.Linq;
 using System;
@@ -14,7 +14,7 @@ namespace BbsDataSignatures
     {
         public const string Name = "https://w3c-ccg.github.io/ldp-bbs2020/contexts/v1#BbsBlsSignature2020";
 
-        public BbsSignatureService SignatureService { get; }
+        public IBbsSignatureService SignatureService { get; }
         public Bls12381G2Key2020 Signer { get; set; }
 
         public BbsBlsSignature2020() : base(Name)
@@ -31,7 +31,9 @@ namespace BbsDataSignatures
                 throw new Exception("Private key not found.");
             }
 
-            var key = new BlsKeyPair(Multibase.Base58.Decode(Signer.PrivateKeyBase58));
+            var key = new BlsKeyPair(
+                publicKey: Multibase.Base58.Decode(Signer.PublicKeyBase58),
+                secretKey: Multibase.Base58.Decode(Signer.PrivateKeyBase58));
 
             var proofValue = SignatureService.Sign(new SignRequest(key, verifyData.Data));
             proof["proofValue"] = Convert.ToBase64String(proofValue);

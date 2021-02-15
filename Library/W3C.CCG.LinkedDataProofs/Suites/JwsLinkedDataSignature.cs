@@ -9,7 +9,7 @@ namespace W3C.CCG.LinkedDataProofs
 {
     public abstract class JwsLinkedDataSignature : LinkedDataSignature
     {
-        public SignerVerificationMethod Signer { get; set; }
+        public ISigner Signer { get; set; }
         public abstract string Algorithm { get; }
 
         protected JwsLinkedDataSignature(string typeName) : base(typeName)
@@ -92,6 +92,6 @@ namespace W3C.CCG.LinkedDataProofs
             return Convert.ToBase64String(encbuff).Replace("=", ",").Replace("+", "-").Replace("/", "_");
         }
 
-        protected abstract SignerVerificationMethod GetSigner(JToken verificationMethod);
+        protected abstract ISigner GetSigner(JToken verificationMethod);
     }
 }
