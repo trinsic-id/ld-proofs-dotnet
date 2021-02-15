@@ -8,7 +8,7 @@ using W3C.CCG.LinkedDataProofs;
 
 namespace BbsDataSignatures
 {
-    public class Bls12381G2Key2020 : VerificationMethod, ISigner
+    public class Bls12381G2Key2020 : VerificationMethod
     {
         public const string Name = "Bls12381G2Key2020";
         private readonly IBbsSignatureService Service = new BbsSignatureService();
@@ -23,16 +23,6 @@ namespace BbsDataSignatures
         {
         }
 
-        public Bls12381G2Key2020(BlsKeyPair keyPair)
-        {
-            PublicKeyBase58 = Multibase.Base58.Encode(keyPair.PublicKey);
-            if (keyPair.SecretKey != null)
-            {
-                PrivateKeyBase58 = Multibase.Base58.Encode(keyPair.SecretKey);
-            }
-            KeyPair = keyPair;
-        }
-
         public string PublicKeyBase58
         {
             get => this["publicKeyBase58"]?.Value<string>();
@@ -44,9 +34,6 @@ namespace BbsDataSignatures
             get => this["privateKeyBase58"]?.Value<string>();
             set => this["privateKeyBase58"] = value;
         }
-
-        [JsonIgnore]
-        public BlsKeyPair? KeyPair { get; }
 
         /// <summary>
         /// Gets the public data for this method
@@ -60,22 +47,15 @@ namespace BbsDataSignatures
             return new Bls12381G2Key2020(clone as JObject);
         }
 
-        public byte[] Sign(IVerifyData input)
+        public BlsKeyPair ToBlsKeyPair()
         {
-            if (input is StringArray stringArray)
+            if (PublicKeyBase58 == null)
             {
-                return Service.Sign(new SignRequest(KeyPair, stringArray.Data));
+                throw new ArgumentNullException(nameof(PublicKeyBase58), "Public key not found");
             }
-            throw new Exception("Invalid input data type");
-        }
-
-        public bool Verify(byte[] signature, IVerifyData input)
-        {
-            if (input is StringArray stringArray)
-            {
-                return Service.Verify(new VerifyRequest(KeyPair, signature, stringArray.Data));
-            }
-            throw new Exception("Invalid input data type");
+            return new BlsKeyPair(
+                publicKey: Multibase.Base58.Decode(PublicKeyBase58),
+                secretKey: PrivateKeyBase58 != null ? Multibase.Base58.Decode(PrivateKeyBase58) : null);
         }
     }
 }

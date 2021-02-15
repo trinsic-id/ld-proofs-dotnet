@@ -6,33 +6,32 @@ using FluentAssertions;
 using W3C.CCG.LinkedDataProofs;
 using W3C.CCG.LinkedDataProofs.Purposes;
 using System.Threading.Tasks;
+using System;
 
 namespace LindedDataProofs.Bbs
 {
     [Collection(ServiceFixture.CollectionDefinitionName)]
-    public class BbsBlsSignature2020Tests
+    public class BbsBlsSignature2020_Tests
     {
-        public BbsBlsSignature2020Tests(ServiceFixture serviceFixture)
+        public BbsBlsSignature2020_Tests(ServiceFixture serviceFixture)
         {
             BbsProvider = new BbsSignatureService();
         }
 
         public BbsSignatureService BbsProvider { get; }
 
-        [Fact(DisplayName = "Sign document with BBS suite")]
+        [Fact(DisplayName = "Sign document")]
         public async Task SignDocument()
         {
             var keyPair = BlsKeyPair.GenerateG2();
-            var verificationMethod = new Bls12381G2Key2020(keyPair);
-
             var document = Utilities.LoadJson("Data/test_document.json");
 
             var signedDocument = await LdSignatures.SignAsync(document, new ProofOptions
             {
                 Suite = new BbsBlsSignature2020
                 {
-                    Signer = verificationMethod,
-                    VerificationMethod = verificationMethod
+                    KeyPair = keyPair,
+                    VerificationMethod = "did:example:alice#key-1"
                 },
                 Purpose = new AssertionMethodPurpose()
             });
@@ -42,20 +41,18 @@ namespace LindedDataProofs.Bbs
             signedDocument["proof"]["proofValue"].Should().NotBeNull();
         }
 
-        [Fact(DisplayName = "Sign verifiable credential with BBS suite")]
+        [Fact(DisplayName = "Sign verifiable credential")]
         public async Task SignVerifiableCredential()
         {
             var keyPair = BlsKeyPair.GenerateG2();
-            var verificationMethod = new Bls12381G2Key2020(keyPair);
-
             var document = Utilities.LoadJson("Data/test_vc.json");
 
             var signedDocument = await LdSignatures.SignAsync(document, new ProofOptions
             {
                 Suite = new BbsBlsSignature2020
                 {
-                    Signer = verificationMethod,
-                    VerificationMethod = verificationMethod
+                    KeyPair = keyPair,
+                    VerificationMethod = "did:example:alice#key-1"
                 },
                 Purpose = new AssertionMethodPurpose()
             });
@@ -65,7 +62,7 @@ namespace LindedDataProofs.Bbs
             signedDocument["proof"]["proofValue"].Should().NotBeNull();
         }
 
-        [Fact(DisplayName = "Verify signed document with BBS suite")]
+        [Fact(DisplayName = "Verify signed document")]
         public async Task VerifySignedDocument()
         {
             var document = Utilities.LoadJson("Data/test_signed_document.json");
@@ -79,34 +76,62 @@ namespace LindedDataProofs.Bbs
             result.Should().NotBeNull();
         }
 
-        //[Fact(DisplayName = "Verify verifiable credentials with BBS suite")]
-        //public void VerifySignedVerifiableCredential()
-        //{
-        //    var document = Utilities.LoadJson("Data/test_signed_vc.json");
+        [Fact(DisplayName = "Verify verifiable credentials")]
+        public async Task VerifySignedVerifiableCredential()
+        {
+            var document = Utilities.LoadJson("Data/test_signed_vc.json");
 
-        //    var proof = LdProofService.VerifyProof(new ProofOptions
-        //    {
-        //        Document = document,
-        //        LdSuiteType = BbsBlsSignature2020.Name,
-        //        ProofPurpose = ProofPurposeNames.AssertionMethod
-        //    });
+            var result = await LdSignatures.VerifyAsync(document, new ProofOptions
+            {
+                Suite = new BbsBlsSignature2020(),
+                Purpose = new AssertionMethodPurpose()
+            });
 
-        //    proof.Should().BeTrue();
-        //}
+            result.Should().NotBeNull();
+        }
 
-        //[Fact(DisplayName = "Should not verify bad sig with BBS suite")]
-        //public void ShouldNotVerifyBadDocument()
-        //{
-        //    var document = Utilities.LoadJson("Data/test_bad_signed_document.json");
+        [Fact(DisplayName = "Should not verify bad signature")]
+        public async Task ShouldNotVerifyBadDocument()
+        {
+            var document = Utilities.LoadJson("Data/test_bad_signed_document.json");
 
-        //    var proof = LdProofService.VerifyProof(new ProofOptions
-        //    {
-        //        Document = document,
-        //        LdSuiteType = BbsBlsSignature2020.Name,
-        //        ProofPurpose = ProofPurposeNames.AssertionMethod
-        //    });
+            var actual = LdSignatures.VerifyAsync(document, new ProofOptions
+            {
+                Suite = new BbsBlsSignature2020(),
+                Purpose = new AssertionMethodPurpose()
+            });
 
-        //    proof.Should().BeFalse();
-        //}
+            await Assert.ThrowsAsync<BbsException>(() => actual);
+        }
+
+        [Fact(DisplayName = "Should not verify with additional unsigned information")]
+        public async Task ShouldNotVerifyAdditionalUnsignedStatement()
+        {
+            var document = Utilities.LoadJson("Data/test_signed_document.json");
+            document["unsignedClaim"] = "oops";
+
+            var actual = LdSignatures.VerifyAsync(document, new ProofOptions
+            {
+                Suite = new BbsBlsSignature2020(),
+                Purpose = new AssertionMethodPurpose()
+            });
+
+            await Assert.ThrowsAsync<Exception>(() => actual);
+        }
+
+        [Fact(DisplayName = "Should not verify with modified information")]
+        public async Task ShouldNotVerifyModifiedSignedDocument()
+        {
+            var document = Utilities.LoadJson("Data/test_signed_document.json");
+            document["email"] = "someOtherEmail@example.com";
+
+            var actual = LdSignatures.VerifyAsync(document, new ProofOptions
+            {
+                Suite = new BbsBlsSignature2020(),
+                Purpose = new AssertionMethodPurpose()
+            });
+
+            await Assert.ThrowsAsync<Exception>(() => actual);
+        }
     }
 }

@@ -15,7 +15,7 @@ namespace BbsDataSignatures
         public const string Name = "https://w3c-ccg.github.io/ldp-bbs2020/contexts/v1#BbsBlsSignature2020";
 
         public IBbsSignatureService SignatureService { get; }
-        public Bls12381G2Key2020 Signer { get; set; }
+        public BlsKeyPair KeyPair { get; set; }
 
         public BbsBlsSignature2020() : base(Name)
         {
@@ -26,16 +26,12 @@ namespace BbsDataSignatures
         {
             var verifyData = payload as StringArray ?? throw new ArgumentException("Invalid data type");
 
-            if (Signer?.PrivateKeyBase58 == null)
+            if (KeyPair?.SecretKey == null)
             {
                 throw new Exception("Private key not found.");
             }
 
-            var key = new BlsKeyPair(
-                publicKey: Multibase.Base58.Decode(Signer.PublicKeyBase58),
-                secretKey: Multibase.Base58.Decode(Signer.PrivateKeyBase58));
-
-            var proofValue = SignatureService.Sign(new SignRequest(key, verifyData.Data));
+            var proofValue = SignatureService.Sign(new SignRequest(KeyPair, verifyData.Data));
             proof["proofValue"] = Convert.ToBase64String(proofValue);
 
             return Task.FromResult(proof);
