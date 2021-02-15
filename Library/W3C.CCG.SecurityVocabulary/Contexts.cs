@@ -11,6 +11,8 @@ namespace W3C.CCG.SecurityVocabulary
 
         public static JObject SecurityContextV2 = LoadFromResource("W3C.CCG.SecurityVocabulary.Data.security-v2.jsonld");
 
+        public static JObject SecurityContextV3 = LoadFromResource("W3C.CCG.SecurityVocabulary.Data.security-v3-unstable.jsonld");
+
         public static JObject DidContextV1 = LoadFromResource("W3C.CCG.SecurityVocabulary.Data.did-v1.jsonld");
 
         private static JObject LoadFromResource(string resourceName)

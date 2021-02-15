@@ -1,18 +1,9 @@
-using System.IO;
 using BbsDataSignatures;
 using BbsSignatures;
 using LinkedDataProofs.Bbs.Tests;
-using Newtonsoft.Json.Linq;
-using VDS.RDF;
-using VDS.RDF.JsonLd;
-using VDS.RDF.Parsing;
 using Xunit;
 using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
 using W3C.CCG.LinkedDataProofs;
-using W3C.CCG.SecurityVocabulary;
-using System;
-using System.Diagnostics;
 using W3C.CCG.LinkedDataProofs.Purposes;
 using System.Threading.Tasks;
 
@@ -74,20 +65,19 @@ namespace LindedDataProofs.Bbs
             signedDocument["proof"]["proofValue"].Should().NotBeNull();
         }
 
-        //[Fact(DisplayName = "Verify signed document with BBS suite")]
-        //public void VerifySignedDocument()
-        //{
-        //    var document = Utilities.LoadJson("Data/test_signed_document.json");
+        [Fact(DisplayName = "Verify signed document with BBS suite")]
+        public async Task VerifySignedDocument()
+        {
+            var document = Utilities.LoadJson("Data/test_signed_document.json");
 
-        //    var proof = LdProofService.VerifyProof(new ProofOptions
-        //    {
-        //        Document = document,
-        //        LdSuiteType = BbsBlsSignature2020.Name,
-        //        ProofPurpose = ProofPurposeNames.AssertionMethod
-        //    });
+            var result = await LdSignatures.VerifyAsync(document, new ProofOptions
+            {
+                Suite = new BbsBlsSignature2020(),
+                Purpose = new AssertionMethodPurpose()
+            });
 
-        //    proof.Should().BeTrue();
-        //}
+            result.Should().NotBeNull();
+        }
 
         //[Fact(DisplayName = "Verify verifiable credentials with BBS suite")]
         //public void VerifySignedVerifiableCredential()

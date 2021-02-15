@@ -45,12 +45,9 @@ namespace BbsDataSignatures
         {
             var verifyData = payload as StringArray ?? throw new ArgumentException("Invalid data type");
 
-            if (Signer?.PublicKeyBase58 == null)
-            {
-                throw new Exception("Public key not found.");
-            }
+            var blsVerificationMethod = new Bls12381G2Key2020(verificationMethod as JObject);
 
-            var key = new BlsKeyPair(Multibase.Base58.Decode(Signer.PublicKeyBase58));
+            var key = new BlsKeyPair(Multibase.Base58.Decode(blsVerificationMethod.PublicKeyBase58));
             var signature = Helpers.FromBase64String(proof["proofValue"]?.ToString() ?? throw new Exception("Proof value not found"));
 
             var valid = SignatureService.Verify(new VerifyRequest(key, signature, verifyData.Data));

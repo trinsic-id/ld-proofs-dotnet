@@ -36,7 +36,11 @@ namespace W3C.CCG.LinkedDataProofs.Purposes
                         }
                     }
                 },
-                new JsonLdProcessorOptions { CompactToRelative = false, DocumentLoader = options.DocumentLoader.Load });
+                new JsonLdProcessorOptions
+                {
+                    CompactToRelative = false,
+                    DocumentLoader = options.DocumentLoader == null ? CachingDocumentLoader.Default.Load : options.DocumentLoader.Load
+                });
 
             if (framed[Term] is JArray keys && keys.Any(x => x.ToString() == verificationMethodId))
             {

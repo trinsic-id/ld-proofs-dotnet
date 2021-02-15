@@ -70,7 +70,7 @@ namespace W3C.CCG.LinkedDataProofs
             var verifyData = CreateVerifyData(proof as JObject, options);
             var verificationMethod = GetVerificationMethod(proof as JObject, options);
 
-            await VerifyAsync((ByteArray)verifyData, proof, verificationMethod, options);
+            await VerifyAsync(verifyData, proof, verificationMethod, options);
 
             // Validate proof purpose
             options.Purpose.Options.VerificationMethod = new VerificationMethod(verificationMethod);
@@ -110,7 +110,11 @@ namespace W3C.CCG.LinkedDataProofs
                     { "@embed", "@always" },
                     { "id", verificationMethod }
                 },
-                new JsonLdProcessorOptions { DocumentLoader = options.DocumentLoader.Load, CompactToRelative = false });
+                new JsonLdProcessorOptions
+                {
+                    DocumentLoader = options.DocumentLoader == null ? CachingDocumentLoader.Default.Load : options.DocumentLoader.Load,
+                    CompactToRelative = false
+                });
 
             if (frame == null || frame["id"] == null)
             {

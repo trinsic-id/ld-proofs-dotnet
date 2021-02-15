@@ -13,10 +13,11 @@ namespace W3C.CCG.LinkedDataProofs
         public static IDocumentLoader Default { get; set; } = new CachingDocumentLoader(Array.Empty<IDidDriver>())
             .AddCached(Constants.DID_V1_URL, Contexts.DidContextV1)
             .AddCached(Constants.SECURITY_CONTEXT_V1_URL, Contexts.SecurityContextV1)
-            .AddCached(Constants.SECURITY_CONTEXT_V2_URL, Contexts.SecurityContextV2);
+            .AddCached(Constants.SECURITY_CONTEXT_V2_URL, Contexts.SecurityContextV2)
+            .AddCached(Constants.SECURITY_CONTEXT_V3_URL, Contexts.SecurityContextV3);
 
 
-        public Dictionary<Uri, RemoteDocument> Documents = new Dictionary<Uri, RemoteDocument>();
+        public Dictionary<string, RemoteDocument> Documents = new Dictionary<string, RemoteDocument>();
         private readonly IEnumerable<IDidDriver> didDrivers;
 
         public CachingDocumentLoader(IEnumerable<IDidDriver> didDrivers)
@@ -26,7 +27,7 @@ namespace W3C.CCG.LinkedDataProofs
 
         public IDocumentLoader AddCached(string uri, JObject document)
         {
-            Documents.Add(new Uri(uri), new RemoteDocument { Document = document });
+            Documents.Add(uri, new RemoteDocument { Document = document });
 
             return this;
         }
@@ -41,12 +42,12 @@ namespace W3C.CCG.LinkedDataProofs
                     return new RemoteDocument { Document = didDocument };
                 }
             }
-            if (Documents.TryGetValue(uri, out var document))
+            if (Documents.TryGetValue(uri.ToString(), out var document))
             {
                 return document;
             }
             var doc = DefaultDocumentLoader.LoadJson(uri, options);
-            Documents.TryAdd(uri, doc);
+            Documents.TryAdd(uri.ToString(), doc);
             return doc;
         }
 

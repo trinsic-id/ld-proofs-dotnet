@@ -7,7 +7,7 @@
       "image": "schema:image"
     },
     "https://w3id.org/security/v2",
-    "https://w3c-ccg.github.io/ldp-bbs2020/context/v1"
+    "https://w3c-ccg.github.io/ldp-bbs2020/contexts/v1"
   ],
   "name": "John Doe",
   "homepage": "https://domain.com/profile",

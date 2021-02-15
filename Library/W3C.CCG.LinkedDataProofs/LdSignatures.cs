@@ -94,7 +94,7 @@ namespace W3C.CCG.LinkedDataProofs
                     context: Constants.SECURITY_CONTEXT_V2_URL,
                     options: new JsonLdProcessorOptions
                     {
-                        DocumentLoader = options.DocumentLoader.Load,
+                        DocumentLoader = options.DocumentLoader == null ? CachingDocumentLoader.Default.Load : options.DocumentLoader.Load,
                         CompactToRelative = false
                     });
             }
