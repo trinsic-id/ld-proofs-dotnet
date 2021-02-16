@@ -98,7 +98,7 @@ namespace W3C.CCG.LinkedDataProofs
 
         #region Private methods
 
-        private JObject GetVerificationMethod(JObject proof, ProofOptions options)
+        protected JObject GetVerificationMethod(JObject proof, ProofOptions options)
         {
             var verificationMethod = proof["verificationMethod"] ?? throw new Exception("No 'verificationMethod' found in proof.");
 

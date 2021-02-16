@@ -57,10 +57,14 @@
     <Content Include="Data\did_example_489398593.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data\test_vc_reveal_document_1.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Remove="Data\ldp-bbs2020.jsonld" />
     <None Remove="Data\did_example_489398593_test %28copy%29.json" />
+    <None Remove="Data\test_vc_reveal_document %28copy%29.json" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Data\ldp-bbs2020.jsonld">

@@ -31,6 +31,7 @@ namespace BbsDataSignatures
                 throw new Exception("Private key not found.");
             }
 
+            Console.WriteLine($"Sign: {verifyData.Data.Count()}");
             var proofValue = SignatureService.Sign(new SignRequest(KeyPair, verifyData.Data));
             proof["proofValue"] = Convert.ToBase64String(proofValue);
 
