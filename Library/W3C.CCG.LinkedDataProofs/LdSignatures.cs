@@ -23,6 +23,14 @@ namespace W3C.CCG.LinkedDataProofs
             if (options.Purpose is null) throw new Exception("Proof purpose is required.");
             if (options.Suite is null) throw new Exception("Suite is required.");
 
+            options.AdditonalData["originalDocument"] = document;
+            var documentCopy = document.DeepClone();
+
+            if (options.DocumentLoader == null)
+            {
+                options.DocumentLoader = CachingDocumentLoader.Default;
+            }
+
             var processorOptions = new JsonLdProcessorOptions
             {
                 CompactToRelative = false,
@@ -31,27 +39,21 @@ namespace W3C.CCG.LinkedDataProofs
                     : options.DocumentLoader.Load
             };
 
-            var input = options.CompactProof
-                ? JsonLdProcessor.Compact(document, Constants.SECURITY_CONTEXT_V2_URL, processorOptions)
+            documentCopy = options.CompactProof
+                ? JsonLdProcessor.Compact(documentCopy, Constants.SECURITY_CONTEXT_V2_URL, processorOptions)
                 : document.DeepClone();
-            input.Remove("proof");
+            documentCopy.Remove("proof");
 
             // create the new proof (suites MUST output a proof using the security-v2
             // `@context`)
-            var proof = await options.Suite.CreateProofAsync(new ProofOptions
-            {
-                Input = input as JObject,
-                Purpose = options.Purpose,
-                Suite = options.Suite,
-                CompactProof = options.CompactProof,
-                DocumentLoader = options.DocumentLoader
-            });
+            options.Input = documentCopy;
+            var proof = await options.Suite.CreateProofAsync(options);
 
             // TODO: Check compaction again
             proof.Remove("@context");
 
-            document["proof"] = proof;
-            return document;
+            documentCopy["proof"] = proof;
+            return documentCopy;
         }
 
         /// <summary>

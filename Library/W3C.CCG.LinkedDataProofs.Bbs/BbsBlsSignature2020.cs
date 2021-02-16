@@ -62,7 +62,7 @@ namespace BbsDataSignatures
             return (StringArray)c14nProofOptions.Concat(c14nDocument).ToArray();
         }
 
-        private IEnumerable<string> CanonizeProof(JObject proof)
+        internal static IEnumerable<string> CanonizeProof(JObject proof)
         {
             proof = proof.DeepClone() as JObject;
 

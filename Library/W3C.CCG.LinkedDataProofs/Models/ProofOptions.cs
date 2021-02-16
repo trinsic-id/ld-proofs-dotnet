@@ -26,6 +26,6 @@ namespace W3C.CCG.LinkedDataProofs
 
         public IDocumentLoader DocumentLoader { get; set; }
 
-        public IDictionary<string, JToken> AdditonalData { get; set; }
+        public IDictionary<string, JToken> AdditonalData { get; set; } = new Dictionary<string, JToken>();
     }
 }
