@@ -42,7 +42,7 @@ namespace BbsDataSignatures
                 CompactToRelative = false
             };
 
-            var proofStatements = Helpers.CanonizeProofStatements(originalProof,processorOptions);
+            var proofStatements = Helpers.CanonizeProofStatements(originalProof, processorOptions, Constants.SECURITY_CONTEXT_V3_URL);
             var documentStatements = Helpers.CanonizeStatements(options.Input, processorOptions);
 
             var numberOfProofStatements = proofStatements.Count();
@@ -69,9 +69,6 @@ namespace BbsDataSignatures
             }
             
             var allInputStatements = proofStatements.Concat(documentStatements);
-
-            options.AdditonalData["allInputStatementsCount"] = allInputStatements.Count();
-            options.AdditonalData["allInputStatements"] = new JArray(allInputStatements.ToArray());
             
             return (StringArray)allInputStatements.ToArray();
         }

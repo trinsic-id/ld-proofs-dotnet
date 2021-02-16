@@ -57,13 +57,13 @@ namespace W3C.CCG.LinkedDataProofs
             return $"{string.Join(Environment.NewLine, statements)}{Environment.NewLine}";
         }
 
-        public static IEnumerable<string> CanonizeProofStatements(JObject proof, JsonLdProcessorOptions options)
+        public static IEnumerable<string> CanonizeProofStatements(JObject proof, JsonLdProcessorOptions options, JToken context = null)
         {
             Console.WriteLine($"Proof: {proof.ToString(Newtonsoft.Json.Formatting.Indented)}");
 
             var proofCopy = proof.DeepClone() as JObject;
 
-            proofCopy["@context"] = Constants.SECURITY_CONTEXT_V2_URL;
+            proofCopy["@context"] = context ?? Constants.SECURITY_CONTEXT_V2_URL;
             proofCopy.Remove("jws");
             proofCopy.Remove("signatureValue");
             proofCopy.Remove("proofValue");

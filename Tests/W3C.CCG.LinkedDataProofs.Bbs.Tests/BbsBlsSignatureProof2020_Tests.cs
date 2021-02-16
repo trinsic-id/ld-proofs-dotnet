@@ -9,6 +9,7 @@ using LinkedDataProofs.Bbs.Tests;
 using Microsoft.Extensions.DependencyInjection;
 using W3C.CCG.LinkedDataProofs.Purposes;
 using Xunit;
+using W3C.CCG.SecurityVocabulary;
 
 namespace W3C.CCG.LinkedDataProofs.Bbs.Tests
 {
@@ -40,6 +41,8 @@ namespace W3C.CCG.LinkedDataProofs.Bbs.Tests
                 },
                 Purpose = new AssertionMethodPurpose()
             });
+
+            signedDocument["proof"]["@context"] = Constants.SECURITY_CONTEXT_V3_URL;
 
             var derivedDocument = await LdSignatures.SignAsync(signedDocument, new ProofOptions
             {
