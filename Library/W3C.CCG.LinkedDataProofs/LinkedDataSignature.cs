@@ -129,20 +129,14 @@ namespace W3C.CCG.LinkedDataProofs
             return frame;
         }
 
-        private string CanonizeProof(JObject proof)
-        {
-            proof = proof.DeepClone() as JObject;
-
-            proof.Remove("jws");
-            proof.Remove("signatureValue");
-            proof.Remove("proofValue");
-
-            return Helpers.Canonize(proof, new JsonLdProcessorOptions());
-        }
-
         protected virtual IVerifyData CreateVerifyData(JObject proof, ProofOptions options)
         {
-            var c14nProofOptions = CanonizeProof(proof);
+            var processorOptions = new JsonLdProcessorOptions
+            {
+                DocumentLoader = options.DocumentLoader.Load
+            };
+
+            var c14nProofOptions = Helpers.CanonizeProof(proof, processorOptions);
             var c14nDocument = Helpers.Canonize(options.Input, new JsonLdProcessorOptions());
 
             var sha256 = SHA256.Create();

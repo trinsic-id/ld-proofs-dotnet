@@ -10,6 +10,7 @@ using VDS.RDF;
 using VDS.RDF.JsonLd;
 using VDS.RDF.Parsing;
 using VDS.RDF.Writing;
+using W3C.CCG.SecurityVocabulary;
 
 namespace W3C.CCG.LinkedDataProofs
 {
@@ -34,8 +35,8 @@ namespace W3C.CCG.LinkedDataProofs
             // added by the RDF processor
             return ToRdf(token, options)
                 .Select(x => x.StartsWith("_:b") ? x.ReplaceFirst("_:b", "_:c14n") : x)
-                .OrderBy(x => x)
-                .Select(x => x.Replace("^^<http://www.w3.org/2001/XMLSchema#string>", ""));
+                .Select(x => x.Replace("^^<http://www.w3.org/2001/XMLSchema#string>", ""))
+                .OrderBy(x => x);
         }
 
         public static string Canonize(JToken token, JsonLdProcessorOptions options)
@@ -45,6 +46,29 @@ namespace W3C.CCG.LinkedDataProofs
             // Merge back all statements, separate with new line,
             // and append new line at the end
             return $"{string.Join(Environment.NewLine, statements)}{Environment.NewLine}";
+        }
+
+        public static string CanonizeProof(JObject proof, JsonLdProcessorOptions options)
+        {
+            var statements = CanonizeProofStatements(proof, options);
+
+            // Merge back all statements, separate with new line,
+            // and append new line at the end
+            return $"{string.Join(Environment.NewLine, statements)}{Environment.NewLine}";
+        }
+
+        public static IEnumerable<string> CanonizeProofStatements(JObject proof, JsonLdProcessorOptions options)
+        {
+            Console.WriteLine($"Proof: {proof.ToString(Newtonsoft.Json.Formatting.Indented)}");
+
+            var proofCopy = proof.DeepClone() as JObject;
+
+            proofCopy["@context"] = Constants.SECURITY_CONTEXT_V2_URL;
+            proofCopy.Remove("jws");
+            proofCopy.Remove("signatureValue");
+            proofCopy.Remove("proofValue");
+
+            return Helpers.CanonizeStatements(proofCopy, options);
         }
 
         public static JToken FromRdf(IEnumerable<string> statements)

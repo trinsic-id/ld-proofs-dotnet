@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VDS.RDF.JsonLd;
 using W3C.CCG.LinkedDataProofs;
+using W3C.CCG.SecurityVocabulary;
 
 namespace BbsDataSignatures
 {
@@ -31,7 +32,7 @@ namespace BbsDataSignatures
                 throw new Exception("Private key not found.");
             }
 
-            Console.WriteLine($"Sign: {verifyData.Data.Count()}");
+            Console.WriteLine(verifyData);
             var proofValue = SignatureService.Sign(new SignRequest(KeyPair, verifyData.Data));
             proof["proofValue"] = Convert.ToBase64String(proofValue);
 
@@ -57,21 +58,15 @@ namespace BbsDataSignatures
 
         protected override IVerifyData CreateVerifyData(JObject proof, ProofOptions options)
         {
-            var c14nProofOptions = CanonizeProof(proof);
-            var c14nDocument = Helpers.CanonizeStatements(options.Input, new JsonLdProcessorOptions());
+            var processorOptions = new JsonLdProcessorOptions
+            {
+                DocumentLoader = options.DocumentLoader == null ? CachingDocumentLoader.Default.Load : options.DocumentLoader.Load
+            };
+
+            var c14nProofOptions = Helpers.CanonizeProofStatements(proof, processorOptions);
+            var c14nDocument = Helpers.CanonizeStatements(options.Input, processorOptions);
 
             return (StringArray)c14nProofOptions.Concat(c14nDocument).ToArray();
-        }
-
-        internal static IEnumerable<string> CanonizeProof(JObject proof)
-        {
-            proof = proof.DeepClone() as JObject;
-
-            proof.Remove("jws");
-            proof.Remove("signatureValue");
-            proof.Remove("proofValue");
-
-            return Helpers.CanonizeStatements(proof, new JsonLdProcessorOptions());
         }
     }
 }

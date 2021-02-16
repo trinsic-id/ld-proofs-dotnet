@@ -1,4 +1,6 @@
-﻿namespace W3C.CCG.LinkedDataProofs
+﻿using System;
+
+namespace W3C.CCG.LinkedDataProofs
 {
     public interface IVerifyData
     {
@@ -14,5 +16,10 @@
         public string[] Data { get; set; }
 
         public static implicit operator StringArray(string[] data) => new StringArray { Data = data };
+
+        public override string ToString()
+        {
+            return string.Join(Environment.NewLine, Data);
+        }
     }
 }

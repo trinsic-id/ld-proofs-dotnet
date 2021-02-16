@@ -34,13 +34,14 @@ namespace BbsDataSignatures
 
         protected override IVerifyData CreateVerifyData(JObject proof, ProofOptions options)
         {
+            var originalProof = options.AdditonalData["originalDocument"]["proof"] as JObject;
             var processorOptions = new JsonLdProcessorOptions
             {
                 DocumentLoader = options.DocumentLoader == null ? CachingDocumentLoader.Default.Load : options.DocumentLoader.Load,
                 CompactToRelative = false
             };
 
-            var proofStatements = BbsBlsSignature2020.CanonizeProof(proof);
+            var proofStatements = Helpers.CanonizeProofStatements(originalProof,processorOptions);
             var documentStatements = Helpers.CanonizeStatements(options.Input, processorOptions);
 
             var transformedInputDocumentStatements = documentStatements.Select(TransformBlankNodeToId).ToArray();
@@ -71,42 +72,32 @@ namespace BbsDataSignatures
 
         protected override Task<JObject> SignAsync(IVerifyData verifyData, JObject proof, ProofOptions options)
         {
+            Console.WriteLine();
+            Console.WriteLine(verifyData);
+
             var derivedProof = new JObject { { "@context", Constants.SECURITY_CONTEXT_V2_URL } };
             var originalProof = options.AdditonalData["originalDocument"]["proof"];
             var signature = Convert.FromBase64String(originalProof["proofValue"].ToString());
 
             derivedProof["nonce"] = Nonce ?? Guid.NewGuid().ToString();
             var keyPair = new Bls12381G2Key2020(GetVerificationMethod(originalProof as JObject, options));
-
-            //Console.WriteLine(string.Join("\n", options.AdditonalData["allInputStatements"].ToObject<string[]>()));
-            //Console.WriteLine(string.Join(", ", options.AdditonalData["revealIndicies"].ToObject<int[]>()));
             var messageCount = options.AdditonalData["allInputStatementsCount"].Value<uint>();
             var bbsKey = keyPair.ToBlsKeyPair().GetBbsKey(messageCount);
             var nonce = derivedProof["nonce"].ToString();
-            Console.WriteLine("Message count: {0}", messageCount);
-            Console.WriteLine("Bbs Key: {0}", Convert.ToBase64String(bbsKey.PublicKey));
-            Console.WriteLine("Signature: {0}", Convert.ToBase64String(signature));
 
-            try
-            {
-                var outputProof = Service.CreateProof(new CreateProofRequest(
-                    publicKey: bbsKey,
-                    messages: GetProofMessages(options.AdditonalData["allInputStatements"].ToObject<string[]>(),
-                        options.AdditonalData["revealIndicies"].ToObject<int[]>()).ToArray(),
-                    signature: signature,
-                    blindingFactor: null,
-                    nonce: nonce));
+            var proofMessages = GetProofMessages(options.AdditonalData["allInputStatements"].ToObject<string[]>(),
+                                    options.AdditonalData["revealIndicies"].ToObject<int[]>()).ToArray();
 
-                // Set the proof value on the derived proof
-                derivedProof["proofValue"] = Convert.ToBase64String(outputProof);
-                return Task.FromResult(derivedProof);
+            var outputProof = Service.CreateProof(new CreateProofRequest(
+                publicKey: bbsKey,
+                messages: proofMessages,
+                signature: signature,
+                blindingFactor: null,
+                nonce: nonce));
 
-            }
-            catch
-            {
-                Console.WriteLine("Result: Failed");
-                throw;
-            }
+            // Set the proof value on the derived proof
+            derivedProof["proofValue"] = Convert.ToBase64String(outputProof);
+            return Task.FromResult(derivedProof);
         }
 
         //public bool VerifyProof(ProofOptions options, JsonLdProcessorOptions processorOptions)
