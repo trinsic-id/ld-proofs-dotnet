@@ -16,7 +16,7 @@ namespace BbsDataSignatures
         public Bls12381G2Key2020()
         {
             TypeName = Name;
-            this["@context"] = "https://w3c-ccg.github.io/ldp-bbs2020/contexts/v1";
+            this["@context"] = "https://w3c-ccg.github.io/ldp-bbs2020/context/v1";
         }
 
         public Bls12381G2Key2020(JObject obj) : base(obj)

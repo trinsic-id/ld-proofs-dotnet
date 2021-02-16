@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using VDS.RDF.JsonLd;
 using W3C.CCG.DidCore;
 using W3C.CCG.LinkedDataProofs.Purposes;
 using W3C.CCG.SecurityVocabulary;
@@ -27,5 +28,14 @@ namespace W3C.CCG.LinkedDataProofs
         public IDocumentLoader DocumentLoader { get; set; }
 
         public IDictionary<string, JToken> AdditonalData { get; set; } = new Dictionary<string, JToken>();
+
+        public JsonLdProcessorOptions GetProcessorOptions()
+        {
+            return new JsonLdProcessorOptions
+            {
+                CompactToRelative = false,
+                DocumentLoader = DocumentLoader == null ? CachingDocumentLoader.Default.Load : DocumentLoader.Load
+            };
+        }
     }
 }

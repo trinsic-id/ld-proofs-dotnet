@@ -14,7 +14,7 @@ namespace LinkedDataProofs.Bbs.Tests
         public ServiceFixture()
         {
             CachingDocumentLoader.Default
-                .AddCached("https://w3c-ccg.github.io/ldp-bbs2020/contexts/v1", Utilities.LoadJson("Data/ldp-bbs2020.jsonld"))
+                .AddCached("https://www.w3.org/2018/credentials/v1", Utilities.LoadJson("Data/credential_vocab.jsonld"))
                 .AddCached("did:example:489398593", Utilities.LoadJson("Data/did_example_489398593.json"))
                 .AddCached("did:example:489398593#test", Utilities.LoadJson("Data/did_example_489398593_test.json"));
         }

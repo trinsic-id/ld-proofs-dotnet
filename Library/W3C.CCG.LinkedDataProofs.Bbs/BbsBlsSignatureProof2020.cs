@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 using VDS.RDF;
 using VDS.RDF.JsonLd;
 using W3C.CCG.LinkedDataProofs;
+using W3C.CCG.LinkedDataProofs.Purposes;
 using W3C.CCG.SecurityVocabulary;
 
 namespace BbsDataSignatures
 {
     public class BbsBlsSignatureProof2020 : LinkedDataSignature
     {
-        public const string Name = "https://w3c-ccg.github.io/ldp-bbs2020/contexts/v1#BbsBlsSignature2020";
+        public const string Name = "sec:BbsBlsSignatureProof2020";
 
         public BbsBlsSignatureProof2020() : base(Name)
         {
@@ -44,60 +45,94 @@ namespace BbsDataSignatures
             var proofStatements = Helpers.CanonizeProofStatements(originalProof,processorOptions);
             var documentStatements = Helpers.CanonizeStatements(options.Input, processorOptions);
 
+            var numberOfProofStatements = proofStatements.Count();
+
             var transformedInputDocumentStatements = documentStatements.Select(TransformBlankNodeToId).ToArray();
             var compactInputDocument = Helpers.FromRdf(transformedInputDocumentStatements);
 
-            var revealDocument = JsonLdProcessor.Frame(compactInputDocument, RevealDocument, processorOptions);
-            var revealDocumentStatements = Helpers.CanonizeStatements(revealDocument, processorOptions);
-
-            var numberOfProofStatements = proofStatements.Count();
-
-            var proofRevealIndicies = new int[numberOfProofStatements].Select((_, x) => x).ToArray();
-            var documentRevealIndicies = revealDocumentStatements.Select(x => Array.IndexOf(transformedInputDocumentStatements, x) + numberOfProofStatements).ToArray();
-
-            if (documentRevealIndicies.Count() != revealDocumentStatements.Count())
+            if (RevealDocument != null)
             {
-                throw new Exception("Some statements in the reveal document not found in original proof");
-            }
+                var revealDocument = JsonLdProcessor.Frame(compactInputDocument, RevealDocument, processorOptions);
+                var revealDocumentStatements = Helpers.CanonizeStatements(revealDocument, processorOptions);
 
-            var revealIndicies = proofRevealIndicies.Concat(documentRevealIndicies);
+                var documentRevealIndicies = revealDocumentStatements.Select(x => Array.IndexOf(transformedInputDocumentStatements, x) + numberOfProofStatements).ToArray();
+
+                if (documentRevealIndicies.Count() != revealDocumentStatements.Count())
+                {
+                    throw new Exception("Some statements in the reveal document not found in original proof");
+                }
+
+                var proofRevealIndicies = new int[numberOfProofStatements].Select((_, x) => x).ToArray();
+                var revealIndicies = proofRevealIndicies.Concat(documentRevealIndicies);
+
+                options.AdditonalData["revealIndicies"] = new JArray(revealIndicies.ToArray());
+            }
+            
             var allInputStatements = proofStatements.Concat(documentStatements);
 
             options.AdditonalData["allInputStatementsCount"] = allInputStatements.Count();
             options.AdditonalData["allInputStatements"] = new JArray(allInputStatements.ToArray());
-            options.AdditonalData["revealIndicies"] = new JArray(revealIndicies.ToArray());
-
+            
             return (StringArray)allInputStatements.ToArray();
         }
 
         protected override Task<JObject> SignAsync(IVerifyData verifyData, JObject proof, ProofOptions options)
         {
-            Console.WriteLine();
             Console.WriteLine(verifyData);
 
-            var derivedProof = new JObject { { "@context", Constants.SECURITY_CONTEXT_V2_URL } };
+            var verifyDataArray = verifyData as StringArray ?? throw new Exception("Unsupported verify data type");
+
+            var derivedProof = new JObject { { "@context", Constants.SECURITY_CONTEXT_V3_URL } };
             var originalProof = options.AdditonalData["originalDocument"]["proof"];
             var signature = Convert.FromBase64String(originalProof["proofValue"].ToString());
 
-            derivedProof["nonce"] = Nonce ?? Guid.NewGuid().ToString();
             var keyPair = new Bls12381G2Key2020(GetVerificationMethod(originalProof as JObject, options));
-            var messageCount = options.AdditonalData["allInputStatementsCount"].Value<uint>();
-            var bbsKey = keyPair.ToBlsKeyPair().GetBbsKey(messageCount);
-            var nonce = derivedProof["nonce"].ToString();
+            var bbsKey = keyPair.ToBlsKeyPair().GetBbsKey((uint)verifyDataArray.Data.Length);
+            var nonce = Nonce ?? Guid.NewGuid().ToString();
 
-            var proofMessages = GetProofMessages(options.AdditonalData["allInputStatements"].ToObject<string[]>(),
-                                    options.AdditonalData["revealIndicies"].ToObject<int[]>()).ToArray();
+            var proofMessages = GetProofMessages(
+                allInputStatements: verifyDataArray.Data,
+                revealIndicies: options.AdditonalData["revealIndicies"].ToObject<int[]>());
 
             var outputProof = Service.CreateProof(new CreateProofRequest(
                 publicKey: bbsKey,
-                messages: proofMessages,
+                messages: proofMessages.ToArray(),
                 signature: signature,
                 blindingFactor: null,
                 nonce: nonce));
 
             // Set the proof value on the derived proof
             derivedProof["proofValue"] = Convert.ToBase64String(outputProof);
+            derivedProof["nonce"] = nonce;
+            derivedProof["created"] = originalProof["created"];
+            derivedProof["proofPurpose"] = originalProof["proofPurpose"];
+            derivedProof["verificationMethod"] = originalProof["verificationMethod"];
+            derivedProof["type"] = "BbsBlsSignatureProof2020";
+
             return Task.FromResult(derivedProof);
+        }
+
+        protected override Task VerifyAsync(IVerifyData verifyData, JToken proof, JToken verificationMethod, ProofOptions options)
+        {
+            Console.WriteLine(verifyData);
+
+            var stringArray = verifyData as StringArray ?? throw new Exception("Unsupported verify data type");
+
+            var proofData = Helpers.FromBase64String(proof["proofValue"]?.ToString() ?? throw new Exception("Proof value not found"));
+            var keyPair = new Bls12381G2Key2020(GetVerificationMethod(proof as JObject, options));
+            var nonce = proof["nonce"]?.ToString() ?? throw new Exception("Nonce not found");
+
+            var verifyResult = Service.VerifyProof(new VerifyProofRequest(
+                publicKey: keyPair.ToBlsKeyPair().GetBbsKey((uint)stringArray.Data.Length),
+                proof: proofData,
+                messages: stringArray.Data,
+                nonce: nonce));
+
+            if (!verifyResult)
+            {
+                throw new Exception("Invalid signature proof");
+            }
+            return Task.CompletedTask;
         }
 
         //public bool VerifyProof(ProofOptions options, JsonLdProcessorOptions processorOptions)
@@ -124,18 +159,6 @@ namespace BbsDataSignatures
 
         //    return verifyResult == SignatureProofStatus.Success;
         //}
-
-        private IEnumerable<IndexedMessage> GetIndexedMessages(string[] statementsToVerify)
-        {
-            for (var i = 0; i < statementsToVerify.Count(); i++)
-            {
-                yield return new IndexedMessage
-                {
-                    Message = statementsToVerify[i],
-                    Index = (uint)i
-                };
-            }
-        }
 
         //public Task<bool> VerifyProofAsync(ProofOptions options, JsonLdProcessorOptions processorOptions) => Task.FromResult(VerifyProof(options, processorOptions));
 
@@ -177,11 +200,6 @@ namespace BbsDataSignatures
                     newValue: nodeIdentifier[ln..^1]);
             }
             return element;
-        }
-
-        protected override Task VerifyAsync(IVerifyData verifyData, JToken proof, JToken verificationMethod, ProofOptions options)
-        {
-            throw new NotImplementedException();
         }
 
         #endregion

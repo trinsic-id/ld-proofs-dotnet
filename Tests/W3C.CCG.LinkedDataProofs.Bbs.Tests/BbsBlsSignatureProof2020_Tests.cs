@@ -26,7 +26,6 @@ namespace W3C.CCG.LinkedDataProofs.Bbs.Tests
         [Fact(DisplayName = "Derive proof from document revealing some")]
         public async Task SignDocumentRevealSome()
         {
-            //var document = Utilities.LoadJson("Data/test_signed_document.json");
             var revealDocument = Utilities.LoadJson("Data/test_vc_reveal_document.json");
             var unsignedDocument = Utilities.LoadJson("Data/test_vc.json");
 
@@ -55,6 +54,12 @@ namespace W3C.CCG.LinkedDataProofs.Bbs.Tests
             derivedDocument.Should().NotBeNull();
             derivedDocument["proof"].Should().NotBeNull();
             derivedDocument["proof"]["proofValue"].Should().NotBeNull();
+
+            var verifyDerived = await LdSignatures.VerifyAsync(derivedDocument, new ProofOptions
+            {
+                Suite = new BbsBlsSignatureProof2020(),
+                Purpose = new AssertionMethodPurpose()
+            });
         }
 
         //[Fact(DisplayName = "Derive proof from document revealing all")]

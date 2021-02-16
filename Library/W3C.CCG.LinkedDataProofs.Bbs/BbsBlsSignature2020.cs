@@ -13,7 +13,7 @@ namespace BbsDataSignatures
 {
     public class BbsBlsSignature2020 : LinkedDataSignature
     {
-        public const string Name = "https://w3c-ccg.github.io/ldp-bbs2020/contexts/v1#BbsBlsSignature2020";
+        public const string Name = "sec:BbsBlsSignature2020";
 
         public IBbsSignatureService SignatureService { get; }
         public BlsKeyPair KeyPair { get; set; }
@@ -21,10 +21,17 @@ namespace BbsDataSignatures
         public BbsBlsSignature2020() : base(Name)
         {
             SignatureService = new BbsSignatureService();
+            InitialProof = new JObject
+            {
+                { "@context", Constants.SECURITY_CONTEXT_V3_URL },
+                { "type", "BbsBlsSignature2020" }
+            };
         }
 
         protected override Task<JObject> SignAsync(IVerifyData payload, JObject proof, ProofOptions options)
         {
+            Console.WriteLine(payload);
+
             var verifyData = payload as StringArray ?? throw new ArgumentException("Invalid data type");
 
             if (KeyPair?.SecretKey == null)
@@ -35,6 +42,7 @@ namespace BbsDataSignatures
             Console.WriteLine(verifyData);
             var proofValue = SignatureService.Sign(new SignRequest(KeyPair, verifyData.Data));
             proof["proofValue"] = Convert.ToBase64String(proofValue);
+            proof["type"] = "BbsBlsSignature2020";
 
             return Task.FromResult(proof);
         }

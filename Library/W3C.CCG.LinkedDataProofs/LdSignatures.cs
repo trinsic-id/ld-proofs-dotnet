@@ -52,8 +52,9 @@ namespace W3C.CCG.LinkedDataProofs
             // TODO: Check compaction again
             proof.Remove("@context");
 
-            documentCopy["proof"] = proof;
-            return documentCopy;
+            var result = document.DeepClone();
+            result["proof"] = proof;
+            return result;
         }
 
         /// <summary>
@@ -66,6 +67,8 @@ namespace W3C.CCG.LinkedDataProofs
         {
             if (options.Purpose is null) throw new Exception("Purpose is required.");
             if (options.Suite is null) throw new Exception("Suite is required.");
+
+            options.AdditonalData["originalDocument"] = document.DeepClone();
 
             // shallow copy to allow for removal of proof set prior to canonize
             var input = document.Type == JTokenType.String
@@ -89,19 +92,14 @@ namespace W3C.CCG.LinkedDataProofs
 
         private static (JToken proof, JToken document) GetProof(JToken document, ProofOptions options)
         {
-            if (options.CompactProof)
-            {
-                document = JsonLdProcessor.Compact(
+            var documentCopy = options.CompactProof
+                ? JsonLdProcessor.Compact(
                     input: document,
                     context: Constants.SECURITY_CONTEXT_V2_URL,
-                    options: new JsonLdProcessorOptions
-                    {
-                        DocumentLoader = options.DocumentLoader == null ? CachingDocumentLoader.Default.Load : options.DocumentLoader.Load,
-                        CompactToRelative = false
-                    });
-            }
+                    options: options.GetProcessorOptions())
+                : document.DeepClone();
 
-            var proof = document["proof"].DeepClone();
+            var proof = documentCopy["proof"].DeepClone();
             document.Remove("proof");
 
             if (proof == null)
