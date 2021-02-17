@@ -4,6 +4,7 @@ using Chaos.NaCl.Internal;
 
 namespace Chaos.NaCl
 {
+#pragma warning disable CS0809 // Obsolete member overrides non-obsolete member
     internal sealed class Poly1305 : OneTimeAuth
     {
         public override int KeySizeInBytes
@@ -94,4 +95,5 @@ namespace Chaos.NaCl
             return CryptoBytes.ConstantTimeEquals(new ArraySegment<byte>(tempBytes), signature);
         }
     }
+#pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
 }

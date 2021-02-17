@@ -45,7 +45,7 @@ namespace LinkedDataProofs
             if (TypeName == null) throw new ArgumentNullException(nameof(TypeName), "TypeName must be specified.");
 
             var proof = InitialProof != null
-                ? JsonLdProcessor.Compact(InitialProof, Constants.SECURITY_CONTEXT_V2_URL, new JsonLdProcessorOptions { DocumentLoader = options.DocumentLoader.Load, CompactToRelative = false })
+                ? JsonLdProcessor.Compact(InitialProof, Constants.SECURITY_CONTEXT_V2_URL, options.GetProcessorOptions())
                 : new JObject { { "@context", Constants.SECURITY_CONTEXT_V2_URL } };
 
             proof["type"] = TypeName;
@@ -110,11 +110,7 @@ namespace LinkedDataProofs
                     { "@embed", "@always" },
                     { "id", verificationMethod }
                 },
-                new JsonLdProcessorOptions
-                {
-                    DocumentLoader = options.DocumentLoader == null ? CachingDocumentLoader.Default.Load : options.DocumentLoader.Load,
-                    CompactToRelative = false
-                });
+                options.GetProcessorOptions());
 
             if (frame == null || frame["id"] == null)
             {
@@ -131,13 +127,10 @@ namespace LinkedDataProofs
 
         protected virtual IVerifyData CreateVerifyData(JObject proof, ProofOptions options)
         {
-            var processorOptions = new JsonLdProcessorOptions
-            {
-                DocumentLoader = options.DocumentLoader.Load
-            };
+            var processorOptions = options.GetProcessorOptions();
 
             var c14nProofOptions = Helpers.CanonizeProof(proof, processorOptions);
-            var c14nDocument = Helpers.Canonize(options.Input, new JsonLdProcessorOptions());
+            var c14nDocument = Helpers.Canonize(options.Input, processorOptions);
 
             var sha256 = SHA256.Create();
 

@@ -2,7 +2,7 @@
 using System.IO;
 using Newtonsoft.Json.Linq;
 
-namespace W3cCcg.LdProofs.Tests
+namespace LinkedDataProfss.Tests
 {
     public class Utilities
     {

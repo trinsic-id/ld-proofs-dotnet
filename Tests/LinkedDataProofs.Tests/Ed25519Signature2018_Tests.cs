@@ -10,12 +10,12 @@ using Newtonsoft.Json.Linq;
 using System.Linq;
 using W3C.CCG.AuthorizationCapabilities;
 
-namespace W3cCcg.LdProofs.Tests
+namespace LinkedDataProfss.Tests
 {
     [Collection(MockDataFixture.CollectionDefinitionName)]
-    public class Ed25519SuiteTests
+    public class Ed25519Signature2018_Tests
     {
-        public Ed25519SuiteTests(MockDataFixture mock)
+        public Ed25519Signature2018_Tests(MockDataFixture mock)
         {
             Mock = mock;
         }

@@ -3,9 +3,9 @@ using LinkedDataProofs;
 using LinkedDataProofs.Suites;
 using Xunit;
 
-namespace W3cCcg.LdProofs.Tests
+namespace LinkedDataProfss.Tests
 {
-    public class Ed25519KeyTests
+    public class Ed25519VerificationKey2018_Tests
     {
         [Fact(DisplayName = "Generate random key")]
         public void GenerateRandomKey()

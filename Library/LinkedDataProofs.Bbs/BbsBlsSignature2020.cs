@@ -9,7 +9,7 @@ using VDS.RDF.JsonLd;
 using LinkedDataProofs;
 using W3C.CCG.SecurityVocabulary;
 
-namespace BbsDataSignatures
+namespace LinkedDataProofs.Bbs
 {
     public class BbsBlsSignature2020 : LinkedDataSignature
     {
@@ -63,10 +63,7 @@ namespace BbsDataSignatures
 
         protected override IVerifyData CreateVerifyData(JObject proof, ProofOptions options)
         {
-            var processorOptions = new JsonLdProcessorOptions
-            {
-                DocumentLoader = options.DocumentLoader == null ? CachingDocumentLoader.Default.Load : options.DocumentLoader.Load
-            };
+            var processorOptions = options.GetProcessorOptions();
 
             var c14nProofOptions = Helpers.CanonizeProofStatements(proof, processorOptions);
             var c14nDocument = Helpers.CanonizeStatements(options.Input, processorOptions);

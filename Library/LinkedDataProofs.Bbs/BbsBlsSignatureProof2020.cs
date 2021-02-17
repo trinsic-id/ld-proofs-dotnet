@@ -10,7 +10,7 @@ using LinkedDataProofs;
 using LinkedDataProofs.Purposes;
 using W3C.CCG.SecurityVocabulary;
 
-namespace BbsDataSignatures
+namespace LinkedDataProofs.Bbs
 {
     public class BbsBlsSignatureProof2020 : LinkedDataSignature
     {
@@ -41,11 +41,7 @@ namespace BbsDataSignatures
             var originalProof = options.AdditonalData["originalDocument"]["proof"].DeepClone() as JObject;
             originalProof["type"] = "BbsBlsSignature2020";
 
-            var processorOptions = new JsonLdProcessorOptions
-            {
-                DocumentLoader = options.DocumentLoader == null ? CachingDocumentLoader.Default.Load : options.DocumentLoader.Load,
-                CompactToRelative = false
-            };
+            var processorOptions = options.GetProcessorOptions();
 
             var proofStatements = Helpers.CanonizeProofStatements(originalProof, processorOptions, Constants.SECURITY_CONTEXT_V3_URL);
             var documentStatements = Helpers.CanonizeStatements(options.Input, processorOptions);
@@ -96,11 +92,6 @@ namespace BbsDataSignatures
                 allInputStatements: verifyDataArray.Data,
                 revealIndicies: options.AdditonalData["revealIndicies"].ToObject<int[]>());
 
-            foreach (var item in proofMessages.Where(x => x.ProofType == ProofMessageType.Revealed))
-            {
-                Console.WriteLine(item.Message);
-            }
-
             var outputProof = Service.CreateProof(new CreateProofRequest(
                 publicKey: bbsKey,
                 messages: proofMessages.ToArray(),
@@ -128,7 +119,6 @@ namespace BbsDataSignatures
             var nonce = proof["nonce"]?.ToString() ?? throw new Exception("Nonce not found");
             var messageCount = Service.GetTotalMessageCount(proofData);
 
-            Console.WriteLine(stringArray);
             var verifyResult = Service.VerifyProof(new VerifyProofRequest(
                 publicKey: keyPair.ToBlsKeyPair().GetBbsKey((uint)messageCount),
                 proof: proofData,

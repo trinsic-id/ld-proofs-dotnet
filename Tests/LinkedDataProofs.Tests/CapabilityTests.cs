@@ -9,7 +9,7 @@ using LinkedDataProofs;
 using LinkedDataProofs.Purposes;
 using Xunit;
 
-namespace W3cCcg.LdProofs.Tests
+namespace LinkedDataProfss.Tests
 {
     public class CapabilityTests
     {

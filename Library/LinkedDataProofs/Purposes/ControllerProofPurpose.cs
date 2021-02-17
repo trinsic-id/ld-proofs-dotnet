@@ -36,11 +36,7 @@ namespace LinkedDataProofs.Purposes
                         }
                     }
                 },
-                new JsonLdProcessorOptions
-                {
-                    CompactToRelative = false,
-                    DocumentLoader = options.DocumentLoader == null ? CachingDocumentLoader.Default.Load : options.DocumentLoader.Load
-                });
+                options.GetProcessorOptions());
 
             if (framed[Term] is JArray keys && keys.Any(x => x.ToString() == verificationMethodId))
             {

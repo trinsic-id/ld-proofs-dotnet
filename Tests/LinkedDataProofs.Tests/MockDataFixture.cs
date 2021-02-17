@@ -8,7 +8,7 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using W3C.CCG.AuthorizationCapabilities;
 
-namespace W3cCcg.LdProofs.Tests
+namespace LinkedDataProfss.Tests
 {
     [CollectionDefinition(CollectionDefinitionName)]
     public class MockDataFixture : ICollectionFixture<MockDataFixture>

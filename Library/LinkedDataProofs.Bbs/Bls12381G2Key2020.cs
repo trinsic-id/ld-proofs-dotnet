@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 using W3C.CCG.DidCore;
 using LinkedDataProofs;
 
-namespace BbsDataSignatures
+namespace LinkedDataProofs.Bbs
 {
     public class Bls12381G2Key2020 : VerificationMethod
     {

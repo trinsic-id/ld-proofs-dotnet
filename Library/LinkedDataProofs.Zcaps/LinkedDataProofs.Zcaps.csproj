@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\W3C.CCG.DidCore\W3C.CCG.DidCore.csproj" />
     <ProjectReference Include="..\LinkedDataProofs\LinkedDataProofs.csproj" />
   </ItemGroup>
 

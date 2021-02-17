@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using BbsDataSignatures;
 using BbsSignatures;
 using FluentAssertions;
-using LinkedDataProofs.Bbs.Tests;
-using Microsoft.Extensions.DependencyInjection;
 using LinkedDataProofs.Purposes;
 using Xunit;
 using W3C.CCG.SecurityVocabulary;

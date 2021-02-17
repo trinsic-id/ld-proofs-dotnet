@@ -26,21 +26,8 @@ namespace LinkedDataProofs
             options.AdditonalData["originalDocument"] = document;
             var documentCopy = document.DeepClone();
 
-            if (options.DocumentLoader == null)
-            {
-                options.DocumentLoader = CachingDocumentLoader.Default;
-            }
-
-            var processorOptions = new JsonLdProcessorOptions
-            {
-                CompactToRelative = false,
-                DocumentLoader = options.DocumentLoader == null
-                    ? CachingDocumentLoader.Default.Load
-                    : options.DocumentLoader.Load
-            };
-
             documentCopy = options.CompactProof
-                ? JsonLdProcessor.Compact(documentCopy, Constants.SECURITY_CONTEXT_V2_URL, processorOptions)
+                ? JsonLdProcessor.Compact(documentCopy, Constants.SECURITY_CONTEXT_V2_URL, options.GetProcessorOptions())
                 : document.DeepClone();
             documentCopy.Remove("proof");
 

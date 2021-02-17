@@ -34,7 +34,9 @@ namespace LinkedDataProofs
             return new JsonLdProcessorOptions
             {
                 CompactToRelative = false,
-                DocumentLoader = DocumentLoader == null ? CachingDocumentLoader.Default.Load : DocumentLoader.Load
+                DocumentLoader = DocumentLoader == null
+                    ? CachingDocumentLoader.Default.Load
+                    : (Func<Uri, JsonLdLoaderOptions, RemoteDocument>)DocumentLoader.Load
             };
         }
     }

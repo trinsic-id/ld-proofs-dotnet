@@ -1,4 +1,4 @@
-using BbsDataSignatures;
+using LinkedDataProofs.Bbs;
 using BbsSignatures;
 using LinkedDataProofs.Bbs.Tests;
 using Xunit;
@@ -8,7 +8,7 @@ using LinkedDataProofs.Purposes;
 using System.Threading.Tasks;
 using System;
 
-namespace LinkedDataProofs.Bbs
+namespace LinkedDataProofs.Bbs.Tests
 {
     [Collection(ServiceFixture.CollectionDefinitionName)]
     public class BbsBlsSignature2020_Tests

@@ -4,7 +4,7 @@ using Newtonsoft.Json.Linq;
 using LinkedDataProofs;
 using LinkedDataProofs.Purposes;
 
-namespace W3cCcg.LdProofs.Tests
+namespace LinkedDataProfss.Tests
 {
     public class MockSuite : LinkedDataSignature
     {
