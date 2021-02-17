@@ -1,4 +1,0 @@
-[submodule "ffi-bbs-signatures"]
-	path = ffi-bbs-signatures
-	url = git@github.com:tmarkovski/ffi-bbs-signatures.git
-	branch = dotnet-update
