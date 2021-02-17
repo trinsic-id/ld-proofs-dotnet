@@ -14,7 +14,7 @@ namespace W3C.CCG.LinkedDataProofs
 
         public string TypeName { get; }
 
-        public abstract Task<JToken> CreateProofAsync(ProofOptions options);
+        public abstract Task<ProofResult> CreateProofAsync(ProofOptions options);
 
         public abstract Task<ValidationResult> VerifyProofAsync(JToken proof, ProofOptions options);
 
@@ -22,5 +22,12 @@ namespace W3C.CCG.LinkedDataProofs
         {
             return Task.FromResult(options.TypeName == TypeName);
         }
+    }
+
+    public class ProofResult
+    {
+        public JToken Proof { get; set; }
+
+        public JObject UpdatedDocument { get; set; }
     }
 }

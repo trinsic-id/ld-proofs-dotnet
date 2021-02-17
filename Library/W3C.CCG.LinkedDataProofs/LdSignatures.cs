@@ -50,10 +50,10 @@ namespace W3C.CCG.LinkedDataProofs
             var proof = await options.Suite.CreateProofAsync(options);
 
             // TODO: Check compaction again
-            proof.Remove("@context");
+            proof.Proof.Remove("@context");
 
-            var result = document.DeepClone();
-            result["proof"] = proof;
+            var result = proof.UpdatedDocument ?? document.DeepClone();
+            result["proof"] = proof.Proof;
             return result;
         }
 

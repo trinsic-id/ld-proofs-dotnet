@@ -26,16 +26,21 @@ namespace BbsDataSignatures
         public BlsKeyPair KeyPair { get; set; }
         public string Nonce { get; set; }
 
-        public override Task<JToken> CreateProofAsync(ProofOptions options)
+        public override async Task<ProofResult> CreateProofAsync(ProofOptions options)
         {
             VerificationMethod = options.AdditonalData["originalDocument"]["proof"]["verificationMethod"];
 
-            return base.CreateProofAsync(options);
+            var result = await base.CreateProofAsync(options);
+
+            result.UpdatedDocument = options.AdditonalData["revealDocument"] as JObject;
+            return result;
         }
 
         protected override IVerifyData CreateVerifyData(JObject proof, ProofOptions options)
         {
-            var originalProof = options.AdditonalData["originalDocument"]["proof"] as JObject;
+            var originalProof = options.AdditonalData["originalDocument"]["proof"].DeepClone() as JObject;
+            originalProof["type"] = "BbsBlsSignature2020";
+
             var processorOptions = new JsonLdProcessorOptions
             {
                 DocumentLoader = options.DocumentLoader == null ? CachingDocumentLoader.Default.Load : options.DocumentLoader.Load,
@@ -54,6 +59,8 @@ namespace BbsDataSignatures
             {
                 var revealDocument = JsonLdProcessor.Frame(compactInputDocument, RevealDocument, processorOptions);
                 var revealDocumentStatements = Helpers.CanonizeStatements(revealDocument, processorOptions);
+
+                options.AdditonalData["revealDocument"] = revealDocument;
 
                 var documentRevealIndicies = revealDocumentStatements.Select(x => Array.IndexOf(transformedInputDocumentStatements, x) + numberOfProofStatements).ToArray();
 
@@ -75,8 +82,6 @@ namespace BbsDataSignatures
 
         protected override Task<JObject> SignAsync(IVerifyData verifyData, JObject proof, ProofOptions options)
         {
-            Console.WriteLine(verifyData);
-
             var verifyDataArray = verifyData as StringArray ?? throw new Exception("Unsupported verify data type");
 
             var derivedProof = new JObject { { "@context", Constants.SECURITY_CONTEXT_V3_URL } };
@@ -90,6 +95,11 @@ namespace BbsDataSignatures
             var proofMessages = GetProofMessages(
                 allInputStatements: verifyDataArray.Data,
                 revealIndicies: options.AdditonalData["revealIndicies"].ToObject<int[]>());
+
+            foreach (var item in proofMessages.Where(x => x.ProofType == ProofMessageType.Revealed))
+            {
+                Console.WriteLine(item.Message);
+            }
 
             var outputProof = Service.CreateProof(new CreateProofRequest(
                 publicKey: bbsKey,
@@ -111,16 +121,15 @@ namespace BbsDataSignatures
 
         protected override Task VerifyAsync(IVerifyData verifyData, JToken proof, JToken verificationMethod, ProofOptions options)
         {
-            Console.WriteLine(verifyData);
-
             var stringArray = verifyData as StringArray ?? throw new Exception("Unsupported verify data type");
 
             var proofData = Helpers.FromBase64String(proof["proofValue"]?.ToString() ?? throw new Exception("Proof value not found"));
             var keyPair = new Bls12381G2Key2020(GetVerificationMethod(proof as JObject, options));
             var nonce = proof["nonce"]?.ToString() ?? throw new Exception("Nonce not found");
 
+            Console.WriteLine(stringArray);
             var verifyResult = Service.VerifyProof(new VerifyProofRequest(
-                publicKey: keyPair.ToBlsKeyPair().GetBbsKey((uint)stringArray.Data.Length),
+                publicKey: keyPair.ToBlsKeyPair().GetBbsKey(25),
                 proof: proofData,
                 messages: stringArray.Data,
                 nonce: nonce));

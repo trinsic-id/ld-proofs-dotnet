@@ -39,7 +39,7 @@ namespace W3C.CCG.LinkedDataProofs
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public override async Task<JToken> CreateProofAsync(ProofOptions options)
+        public override async Task<ProofResult> CreateProofAsync(ProofOptions options)
         {
             if (VerificationMethod == null) throw new ArgumentNullException(nameof(VerificationMethod), "VerificationMethod must be specified.");
             if (TypeName == null) throw new ArgumentNullException(nameof(TypeName), "TypeName must be specified.");
@@ -62,7 +62,7 @@ namespace W3C.CCG.LinkedDataProofs
 
             // sign data
             proof = await SignAsync(verifyData, proof, options);
-            return proof;
+            return new ProofResult { Proof = proof };
         }
 
         public override async Task<ValidationResult> VerifyProofAsync(JToken proof, ProofOptions options)

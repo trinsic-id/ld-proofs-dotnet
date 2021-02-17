@@ -30,16 +30,13 @@ namespace BbsDataSignatures
 
         protected override Task<JObject> SignAsync(IVerifyData payload, JObject proof, ProofOptions options)
         {
-            Console.WriteLine(payload);
-
             var verifyData = payload as StringArray ?? throw new ArgumentException("Invalid data type");
 
             if (KeyPair?.SecretKey == null)
             {
                 throw new Exception("Private key not found.");
             }
-
-            Console.WriteLine(verifyData);
+            
             var proofValue = SignatureService.Sign(new SignRequest(KeyPair, verifyData.Data));
             proof["proofValue"] = Convert.ToBase64String(proofValue);
             proof["type"] = "BbsBlsSignature2020";
