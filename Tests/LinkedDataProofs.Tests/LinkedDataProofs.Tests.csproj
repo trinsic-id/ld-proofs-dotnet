@@ -1,0 +1,74 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+    <PackageReference Include="coverlet.collector" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Library\LinkedDataProofs\LinkedDataProofs.csproj" />
+    <ProjectReference Include="..\..\Library\LinkedDataProofs.Zcaps\LinkedDataProofs.Zcaps.csproj" />
+    <ProjectReference Include="..\..\Library\LinkedDataProofs.SecurityVocabulary\LinkedDataProofs.SecurityVocabulary.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TestData\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="TestData\example-doc-with-beta-invocation.json" />
+    <None Remove="TestData\ed25519-carol-keys.json" />
+    <None Remove="TestData\did-doc-gamma.json" />
+    <None Remove="TestData\did-doc-alpha.json" />
+    <None Remove="TestData\did-doc-beta.json" />
+    <None Remove="TestData\veres-one-context.jsonld" />
+    <None Remove="TestData\delegated-ocap-root-beta.json" />
+    <None Remove="TestData\delegated-ocap-root-alpha.json" />
+    <None Remove="TestData\ben-inv-ocap.jsonld" />
+    <None Remove="TestData\ben-del-ocap.jsonld" />
+    <None Remove="TestData\did-doc-delta.json" />
+    <None Remove="TestData\example-doc-with-alpha-invocation.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TestData\example-doc-with-beta-invocation.json" />
+    <Content Include="TestData\ed25519-carol-keys.json" />
+    <Content Include="TestData\did-doc-gamma.json" />
+    <Content Include="TestData\did-doc-alpha.json" />
+    <Content Include="TestData\did-doc-beta.json" />
+    <Content Include="TestData\veres-one-context.jsonld" />
+    <Content Include="TestData\delegated-ocap-root-beta.json" />
+    <Content Include="TestData\delegated-ocap-root-alpha.json" />
+    <Content Include="TestData\ben-inv-ocap.jsonld" />
+    <Content Include="TestData\ben-del-ocap.jsonld" />
+    <Content Include="TestData\did-doc-delta.json" />
+    <Content Include="TestData\example-doc-with-alpha-invocation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="TestData\alyssa-del-ocap.jsonld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\alyssa-inv-ocap.jsonld">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\ed25519-alice-keys.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\ed25519-bob-keys.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\example-doc.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\ed25519-diana-keys.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>
