@@ -9,6 +9,7 @@ using VDS.RDF.JsonLd;
 using LinkedDataProofs;
 using LinkedDataProofs.Purposes;
 using W3C.CCG.SecurityVocabulary;
+using System.Text;
 
 namespace LinkedDataProofs.Bbs
 {
@@ -24,7 +25,7 @@ namespace LinkedDataProofs.Bbs
         private BbsSignatureService Service { get; }
         public JToken RevealDocument { get; set; }
         public BlsKeyPair KeyPair { get; set; }
-        public string Nonce { get; set; }
+        public byte[] Nonce { get; set; }
 
         public override async Task<ProofResult> CreateProofAsync(ProofOptions options)
         {
@@ -36,6 +37,7 @@ namespace LinkedDataProofs.Bbs
             return result;
         }
 
+        /// <inheritdoc />
         protected override IVerifyData CreateVerifyData(JObject proof, ProofOptions options)
         {
             var originalProof = options.AdditonalData["originalDocument"]["proof"].DeepClone() as JObject;
@@ -48,11 +50,13 @@ namespace LinkedDataProofs.Bbs
 
             var numberOfProofStatements = proofStatements.Count();
 
-            var transformedInputDocumentStatements = documentStatements.Select(TransformBlankNodeToId).ToArray();
-            var compactInputDocument = Helpers.FromRdf(transformedInputDocumentStatements);
-
+            // if RevealDocument is present, this is a proof derivation
+            // apply transformation of blank node to urn:bnid format
             if (RevealDocument != null)
             {
+                var transformedInputDocumentStatements = documentStatements.Select(TransformBlankNodeToId).ToArray();
+                var compactInputDocument = Helpers.FromRdf(transformedInputDocumentStatements);
+
                 var revealDocument = JsonLdProcessor.Frame(compactInputDocument, RevealDocument, processorOptions);
                 var revealDocumentStatements = Helpers.CanonizeStatements(revealDocument, processorOptions);
 
@@ -70,12 +74,18 @@ namespace LinkedDataProofs.Bbs
 
                 options.AdditonalData["revealIndicies"] = new JArray(revealIndicies.ToArray());
             }
+            else
+            {
+                // it's proof verification, apply transform id to blank node
+                documentStatements = documentStatements.Select(TransformIdToBlankNode);
+            }
             
             var allInputStatements = proofStatements.Concat(documentStatements);
             
             return (StringArray)allInputStatements.ToArray();
         }
 
+        /// <inheritdoc />
         protected override Task<JObject> SignAsync(IVerifyData verifyData, JObject proof, ProofOptions options)
         {
             var verifyDataArray = verifyData as StringArray ?? throw new Exception("Unsupported verify data type");
@@ -86,7 +96,7 @@ namespace LinkedDataProofs.Bbs
 
             var keyPair = new Bls12381G2Key2020(GetVerificationMethod(originalProof as JObject, options));
             var bbsKey = keyPair.ToBlsKeyPair().GetBbsKey((uint)verifyDataArray.Data.Length);
-            var nonce = Nonce ?? Guid.NewGuid().ToString();
+            var nonce = Nonce ?? Encoding.UTF8.GetBytes(Guid.NewGuid().ToString());
 
             var proofMessages = GetProofMessages(
                 allInputStatements: verifyDataArray.Data,
@@ -101,7 +111,7 @@ namespace LinkedDataProofs.Bbs
 
             // Set the proof value on the derived proof
             derivedProof["proofValue"] = Convert.ToBase64String(outputProof);
-            derivedProof["nonce"] = nonce;
+            derivedProof["nonce"] = Convert.ToBase64String(nonce);
             derivedProof["created"] = originalProof["created"];
             derivedProof["proofPurpose"] = originalProof["proofPurpose"];
             derivedProof["verificationMethod"] = originalProof["verificationMethod"];
@@ -110,13 +120,15 @@ namespace LinkedDataProofs.Bbs
             return Task.FromResult(derivedProof);
         }
 
+        /// <inheritdoc />
         protected override Task VerifyAsync(IVerifyData verifyData, JToken proof, JToken verificationMethod, ProofOptions options)
         {
             var stringArray = verifyData as StringArray ?? throw new Exception("Unsupported verify data type");
 
             var proofData = Helpers.FromBase64String(proof["proofValue"]?.ToString() ?? throw new Exception("Proof value not found"));
+            var nonce = Helpers.FromBase64String(proof["nonce"]?.ToString() ?? throw new Exception("Nonce not found"));
             var keyPair = new Bls12381G2Key2020(GetVerificationMethod(proof as JObject, options));
-            var nonce = proof["nonce"]?.ToString() ?? throw new Exception("Nonce not found");
+
             var messageCount = Service.GetTotalMessageCount(proofData);
 
             var verifyResult = Service.VerifyProof(new VerifyProofRequest(
@@ -132,46 +144,14 @@ namespace LinkedDataProofs.Bbs
             return Task.CompletedTask;
         }
 
-        //public bool VerifyProof(ProofOptions options, JsonLdProcessorOptions processorOptions)
-        //{
-        //    options.Proof["type"] = "https://w3c-ccg.github.io/ldp-bbs2020/context/v1#BbsBlsSignature2020";
-
-        //    var documentStatements = BbsBlsSignature2020Suite.CreateVerifyDocumentData(options.Document, processorOptions);
-        //    var proofStatements = BbsBlsSignature2020Suite.CreateVerifyProofData(options.Proof, processorOptions);
-
-        //    var transformedInputDocumentStatements = documentStatements.Select(TransformIdToBlankNode).ToArray();
-
-        //    var statementsToVerify = proofStatements.Concat(transformedInputDocumentStatements);
-
-        //    var verificationMethod = BbsBlsSignature2020Suite.GetVerificationMethod(options.Proof, processorOptions);
-
-        //    var proofData = Convert.FromBase64String(options.Proof["proofValue"].ToString());
-        //    var nonce = options.Proof["nonce"].ToString();
-
-        //    var verifyResult = BbsProvider.VerifyProof(new VerifyProofRequest(
-        //        publicKey: verificationMethod.ToBlsKeyPair().GeyBbsKeyPair((uint)statementsToVerify.Count()),
-        //        proof: proofData,
-        //        messages: GetIndexedMessages(statementsToVerify.ToArray()).ToArray(),
-        //        nonce: nonce));
-
-        //    return verifyResult == SignatureProofStatus.Success;
-        //}
-
-        //public Task<bool> VerifyProofAsync(ProofOptions options, JsonLdProcessorOptions processorOptions) => Task.FromResult(VerifyProof(options, processorOptions));
-
         #region Private methods
 
-        private IEnumerable<ProofMessage> GetProofMessages(string[] allInputStatements, int[] revealIndicies)
-        {
-            for (var i = 0; i < allInputStatements.Count(); i++)
+        private IEnumerable<ProofMessage> GetProofMessages(string[] allInputStatements, int[] revealIndicies) => allInputStatements
+            .Select((statement, index) => new ProofMessage
             {
-                yield return new ProofMessage
-                {
-                    Message = allInputStatements[i],
-                    ProofType = revealIndicies.Contains(i) ? ProofMessageType.Revealed : ProofMessageType.HiddenProofSpecificBlinding
-                };
-            }
-        }
+                Message = statement,
+                ProofType = revealIndicies.Contains(index) ? ProofMessageType.Revealed : ProofMessageType.HiddenProofSpecificBlinding
+            });
 
         private string TransformBlankNodeToId(string element)
         {
@@ -187,14 +167,15 @@ namespace LinkedDataProofs.Bbs
 
         private string TransformIdToBlankNode(string element)
         {
-            var ln = "<urn:bnid:".Length;
-
-            var nodeIdentifier = element.Split(" ").First();
-            if (nodeIdentifier.StartsWith("<urn:bnid:_:c14n"))
+            var prefixString = "<urn:bnid:";
+            if (element.Contains("<urn:bnid:_:c14n", StringComparison.OrdinalIgnoreCase))
             {
+                var prefixIndex = element.IndexOf(prefixString);
+                var closingIndex = element.IndexOf(">", prefixIndex);
                 return element.Replace(
-                    oldValue: nodeIdentifier,
-                    newValue: nodeIdentifier[ln..^1]);
+                  element.Substring(prefixIndex, closingIndex + 1 - prefixIndex),
+                  element.Substring(prefixIndex + prefixString.Length, closingIndex - prefixIndex - prefixString.Length)
+                );
             }
             return element;
         }

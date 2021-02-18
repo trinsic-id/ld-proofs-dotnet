@@ -98,31 +98,40 @@ namespace LinkedDataProofs
 
         #region Private methods
 
-        protected JObject GetVerificationMethod(JObject proof, ProofOptions options)
+        protected VerificationMethod GetVerificationMethod(JObject proof, ProofOptions options)
         {
             var verificationMethod = proof["verificationMethod"] ?? throw new Exception("No 'verificationMethod' found in proof.");
 
-            var frame = JsonLdProcessor.Frame(
-                verificationMethod,
+            var verificationMethodId = verificationMethod.Type switch
+            {
+                JTokenType.String => verificationMethod.ToString(),
+                JTokenType.Object => verificationMethod["id"]?.ToString() ?? throw new Exception("Verification Method found, but it's 'id' property was empty"),
+                _ => throw new Exception($"Invalid verification method type: {verificationMethod.Type}")
+            };
+            var processorOptions = options.GetProcessorOptions();
+            processorOptions.ExpandContext = Constants.SECURITY_CONTEXT_V2_URL;
+
+            var result = JsonLdProcessor.Frame(
+                verificationMethodId,
                 new JObject
                 {
                     { "@context", Constants.SECURITY_CONTEXT_V2_URL },
                     { "@embed", "@always" },
                     { "id", verificationMethod }
                 },
-                options.GetProcessorOptions());
+                processorOptions);
 
-            if (frame == null || frame["id"] == null)
+            if (result == null || result["id"] == null)
             {
                 throw new Exception($"Verification method {verificationMethod} not found.");
             }
 
-            if (frame["revoked"] != null)
+            if (result["revoked"] != null)
             {
                 throw new Exception("The verification method has been revoked.");
             }
 
-            return frame;
+            return new VerificationMethod(result);
         }
 
         protected virtual IVerifyData CreateVerifyData(JObject proof, ProofOptions options)

@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using VDS.RDF.JsonLd;
 using LinkedDataProofs.Purposes;
 using W3C.CCG.SecurityVocabulary;
+using System.Diagnostics.CodeAnalysis;
 
 namespace LinkedDataProofs
 {
@@ -77,7 +78,13 @@ namespace LinkedDataProofs
             return result;
         }
 
-        private static (JToken proof, JToken document) GetProof(JToken document, ProofOptions options)
+        /// <summary>
+        /// Get a proof from a signed document
+        /// </summary>
+        /// <param name="document"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public static (JToken proof, JToken document) GetProof(JToken document, ProofOptions options)
         {
             var documentCopy = options.CompactProof
                 ? JsonLdProcessor.Compact(
@@ -98,5 +105,12 @@ namespace LinkedDataProofs
 
             return (proof, document);
         }
+
+        /// <summary>
+        /// Returns <c>true/c> if the input document contains proof
+        /// </summary>
+        /// <param name="document"></param>
+        /// <returns></returns>
+        public static bool HasProof(JToken document) => document["proof"].HasValues;
     }
 }

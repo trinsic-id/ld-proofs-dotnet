@@ -19,7 +19,7 @@ namespace LinkedDataProofs.Bbs.Tests
         public IServiceProvider Provider { get; }
         public BbsSignatureService BbsProvider { get; }
 
-        [Fact(DisplayName = "Derive proof from document revealing some")]
+        [Fact(DisplayName = "Sign, derive and proof from vc revealing some")]
         public async Task SignDocumentRevealSome()
         {
             var revealDocument = Utilities.LoadJson("Data/test_vc_reveal_document.json");
@@ -37,14 +37,11 @@ namespace LinkedDataProofs.Bbs.Tests
                 Purpose = new AssertionMethodPurpose()
             });
 
-            signedDocument["proof"]["@context"] = Constants.SECURITY_CONTEXT_V3_URL;
-
             var derivedDocument = await LdSignatures.SignAsync(signedDocument, new ProofOptions
             {
                 Suite = new BbsBlsSignatureProof2020
                 {
-                    RevealDocument = revealDocument,
-                    Nonce = "123"
+                    RevealDocument = revealDocument
                 },
                 Purpose = new AssertionMethodPurpose()
             });
@@ -58,67 +55,131 @@ namespace LinkedDataProofs.Bbs.Tests
                 Suite = new BbsBlsSignatureProof2020(),
                 Purpose = new AssertionMethodPurpose()
             });
+
+            Assert.NotNull(verifyDerived);
+            Assert.Equal(verifyDerived.Controller, verificationMethod.Controller);
         }
 
-        //[Fact(DisplayName = "Derive proof from document revealing all")]
-        //public void SignDocumentRevealAll()
-        //{
-        //    var keyPair = BbsProvider.GenerateBlsKey();
+        [Fact(DisplayName = "Derive proof from document revealing all")]
+        public async Task SignDocumentRevealAll()
+        {
+            var revealDocument = Utilities.LoadJson("Data/test_reveal_all_document.json");
+            var signedDocument = Utilities.LoadJson("Data/test_signed_document.json");
 
-        //    var document = Utilities.LoadJson("Data/test_signed_document.json");
-        //    var proofRequest = Utilities.LoadJson("Data/test_reveal_all_document.json");
+            var verificationMethod = new Bls12381G2Key2020(Utilities.LoadJson("Data/did_example_489398593_test.json"));
 
-        //    var proof = LdProofService.CreateProof(new ProofOptions
-        //    {
-        //        Document = document,
-        //        ProofRequest = proofRequest,
-        //        LdSuiteType = BbsBlsSignatureProof2020.Name,
-        //        ProofPurpose = ProofPurposeNames.AssertionMethod,
-        //        VerificationMethod = keyPair.ToVerificationMethod("did:example:123#key", "did:example:123")
-        //    });
+            var derivedDocument = await LdSignatures.SignAsync(signedDocument, new ProofOptions
+            {
+                Suite = new BbsBlsSignatureProof2020
+                {
+                    RevealDocument = revealDocument,
+                    VerificationMethod = verificationMethod
+                },
+                Purpose = new AssertionMethodPurpose()
+            });
 
-        //    proof.Should().NotBeNull();
-        //    proof["proof"].Should().NotBeNull();
-        //    proof["proof"]["proofValue"].Should().NotBeNull();
-        //}
+            derivedDocument.Should().NotBeNull();
+            derivedDocument["proof"].Should().NotBeNull();
+            derivedDocument["proof"]["proofValue"].Should().NotBeNull();
+        }
 
-        //[Fact(DisplayName = "Derive proof from verifiable credential revealing all")]
-        //public void DeriveVerifiableCredentialRevealAll()
-        //{
-        //    var keyPair = BbsProvider.GenerateBlsKey();
+        [Fact(DisplayName = "Derive proof from verifiable credential revealing all")]
+        public async Task DeriveVerifiableCredentialRevealAll()
+        {
+            var revealDocument = Utilities.LoadJson("Data/test_vc_reveal_document.json");
+            var signedDocument = Utilities.LoadJson("Data/test_signed_vc.json");
 
-        //    var document = Utilities.LoadJson("Data/test_signed_vc.json");
-        //    var proofRequest = Utilities.LoadJson("Data/test_vc_reveal_document.json");
+            var verificationMethod = new Bls12381G2Key2020(Utilities.LoadJson("Data/did_example_489398593_test.json"));
 
-        //    var proof = LdProofService.CreateProof(new ProofOptions
-        //    {
-        //        Document = document,
-        //        ProofRequest = proofRequest,
-        //        LdSuiteType = BbsBlsSignatureProof2020.Name,
-        //        ProofPurpose = ProofPurposeNames.AssertionMethod,
-        //        VerificationMethod = keyPair.ToVerificationMethod("did:example:123#key", "did:example:123")
-        //    });
+            var derivedDocument = await LdSignatures.SignAsync(signedDocument, new ProofOptions
+            {
+                Suite = new BbsBlsSignatureProof2020
+                {
+                    RevealDocument = revealDocument,
+                    Nonce = new byte[] { 1, 2, 3 },
+                    VerificationMethod = verificationMethod
+                },
+                Purpose = new AssertionMethodPurpose()
+            });
 
-        //    proof.Should().NotBeNull();
-        //    proof["proof"].Should().NotBeNull();
-        //    proof["proof"]["proofValue"].Should().NotBeNull();
-        //}
+            derivedDocument.Should().NotBeNull();
+            derivedDocument["proof"].Should().NotBeNull();
+            derivedDocument["proof"]["proofValue"].Should().NotBeNull();
+        }
 
-        //[Fact(DisplayName = "Verify proof from signed document revealing all")]
-        //public void VerifySignedDocumentRevealAll()
-        //{
-        //    var document = Utilities.LoadJson("Data/test_proof_document.json");
-        //    var proofRequest = Utilities.LoadJson("Data/test_reveal_all_document.json");
+        [Fact(DisplayName = "Should verify derived proof")]
+        public async Task VerifyDerivedProof()
+        {
+            var document = Utilities.LoadJson("Data/test_partial_proof_document.json");
 
-        //    var proof = LdProofService.VerifyProof(new ProofOptions
-        //    {
-        //        Document = document,
-        //        ProofRequest = proofRequest,
-        //        LdSuiteType = BbsBlsSignatureProof2020.Name,
-        //        ProofPurpose = ProofPurposeNames.AssertionMethod
-        //    });
+            var result = await LdSignatures.VerifyAsync(document, new ProofOptions
+            {
+                Suite = new BbsBlsSignatureProof2020(),
+                Purpose = new AssertionMethodPurpose()
+            });
 
-        //    proof.Should().BeTrue();
-        //}
+            Assert.NotNull(result);
+            Assert.Equal("did:example:489398593", result.Controller);
+        }
+
+        [Fact(DisplayName = "Should verify partial derived proof")]
+        public async Task VerifyPartialDerivedProof()
+        {
+            var document = Utilities.LoadJson("Data/test_partial_proof_document.json");
+
+            var result = await LdSignatures.VerifyAsync(document, new ProofOptions
+            {
+                Suite = new BbsBlsSignatureProof2020(),
+                Purpose = new AssertionMethodPurpose()
+            });
+
+            Assert.NotNull(result);
+            Assert.Equal("did:example:489398593", result.Controller);
+        }
+
+        [Fact(DisplayName = "Should verify a fully revealed derived proof that uses nesting from a vc")]
+        public async Task VerifyFullyRevealedDerivedProofFromVc()
+        {
+            var document = Utilities.LoadJson("Data/test_proof_nested_vc_document.json");
+
+            var result = await LdSignatures.VerifyAsync(document, new ProofOptions
+            {
+                Suite = new BbsBlsSignatureProof2020(),
+                Purpose = new AssertionMethodPurpose()
+            });
+
+            Assert.NotNull(result);
+            Assert.Equal("did:example:489398593", result.Controller);
+        }
+
+        [Fact(DisplayName = "Should verify a partially revealed derived proof that uses nesting from a vc")]
+        public async Task VerifyPartialRevealedDerivedProofFromVc()
+        {
+            var document = Utilities.LoadJson("Data/test_partial_proof_nested_vc_document.json");
+
+            var result = await LdSignatures.VerifyAsync(document, new ProofOptions
+            {
+                Suite = new BbsBlsSignatureProof2020(),
+                Purpose = new AssertionMethodPurpose()
+            });
+
+            Assert.NotNull(result);
+            Assert.Equal("did:example:489398593", result.Controller);
+        }
+
+        [Fact(DisplayName = "Should verify partial derived proof from vc")]
+        public async Task VerifyPartialDerivedProofFromVc()
+        {
+            var document = Utilities.LoadJson("Data/test_partial_proof_vc_document.json");
+
+            var result = await LdSignatures.VerifyAsync(document, new ProofOptions
+            {
+                Suite = new BbsBlsSignatureProof2020(),
+                Purpose = new AssertionMethodPurpose()
+            });
+
+            Assert.NotNull(result);
+            Assert.Equal("did:example:489398593", result.Controller);
+        }
     }
 }

@@ -63,6 +63,18 @@
     <Content Include="Data\citizenship-v1.jsonld">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data\test_partial_proof_vc_document.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\test_partial_proof_nested_vc_document.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\test_proof_nested_vc_document.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\test_partial_proof_document.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Remove="Data\ldp-bbs2020.jsonld" />
@@ -70,6 +82,10 @@
     <None Remove="Data\test_vc_reveal_document %28copy%29.json" />
     <None Remove="Data\credential_vocab.jsonld" />
     <None Remove="Data\citizenship-v1.jsonld" />
+    <None Remove="Data\test_partial_proof_vc_document.json" />
+    <None Remove="Data\test_partial_proof_nested_vc_document.json" />
+    <None Remove="Data\test_proof_nested_vc_document.json" />
+    <None Remove="Data\test_partial_proof_document.json" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Data\ldp-bbs2020.jsonld">
