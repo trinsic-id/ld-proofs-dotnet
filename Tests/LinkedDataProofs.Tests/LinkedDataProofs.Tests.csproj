@@ -33,6 +33,7 @@
     <None Remove="TestData\ben-inv-ocap.jsonld" />
     <None Remove="TestData\ben-del-ocap.jsonld" />
     <None Remove="TestData\did-doc-delta.json" />
+    <None Remove="TestData\example-doc-with-alpha-invocation.json" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="TestData\example-doc-with-beta-invocation.json" />
@@ -46,6 +47,9 @@
     <Content Include="TestData\ben-inv-ocap.jsonld" />
     <Content Include="TestData\ben-del-ocap.jsonld" />
     <Content Include="TestData\did-doc-delta.json" />
+    <Content Include="TestData\example-doc-with-alpha-invocation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Update="TestData\alyssa-del-ocap.jsonld">
@@ -61,9 +65,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestData\example-doc.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestData\example-doc-with-alpha-invocation.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestData\ed25519-diana-keys.json">
