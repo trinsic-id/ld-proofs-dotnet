@@ -25,7 +25,11 @@ namespace LinkedDataProofs
             var nqWriter = new NQuadsWriter(NQuadsSyntax.Rdf11);
             using var expectedTextWriter = new System.IO.StringWriter();
             nqWriter.Save(store, expectedTextWriter);
-            return expectedTextWriter.ToString().Split(Environment.NewLine).Where(x => !string.IsNullOrWhiteSpace(x));
+            return expectedTextWriter.ToString()
+                .Split(expectedTextWriter.NewLine)
+                .Select(x => x.Trim())
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .OrderBy(x => x);
         }
 
         public static IEnumerable<string> CanonizeStatements(JToken token, JsonLdProcessorOptions options)
@@ -45,6 +49,11 @@ namespace LinkedDataProofs
 
             // Merge back all statements, separate with new line,
             // and append new line at the end
+            // Note: this may affect certain use cases, where proofs and verifications
+            // run on different environments, since NewLine is \r\n on non-Unix environments,
+            // while it is \n on Unix environment. Also, this is one reason why some tests are
+            // failing when running them on Windows; the proofs for the test vectors were
+            // generated on a Mac or Linux.
             return $"{string.Join(Environment.NewLine, statements)}{Environment.NewLine}";
         }
 
