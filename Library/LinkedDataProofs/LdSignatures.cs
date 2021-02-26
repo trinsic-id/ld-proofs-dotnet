@@ -126,7 +126,7 @@ namespace LinkedDataProofs
                 {
                     { "@context", Constants.SECURITY_CONTEXT_V2_URL },
                     { "@explicit", true },
-                    { proofPurpose, new JObject()
+                    { proofPurpose, new JObject { { "@embed", "@always" } }
                     }
                 },
                 options: processorOptions);
