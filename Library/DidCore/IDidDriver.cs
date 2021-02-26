@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace W3C.CCG.DidCore
 {
-    public interface IDidDriver
+    public interface IDocumentProvider
     {
         bool CanResolve(string didUri);
-        bool CanResolve(Uri didUri);
 
-        Task<DidDocument> ResolveAsync(Uri didUri);
-        Task<DidDocument> Resolve(Uri didUri);
+        Task<JObject> ResolveAsync(string didUri);
     }
 }

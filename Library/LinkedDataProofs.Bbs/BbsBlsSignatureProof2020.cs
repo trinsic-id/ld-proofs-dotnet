@@ -29,7 +29,7 @@ namespace LinkedDataProofs.Bbs
 
         public override async Task<ProofResult> CreateProofAsync(ProofOptions options)
         {
-            VerificationMethod = options.AdditonalData["originalDocument"]["proof"]["verificationMethod"];
+            VerificationMethod = options.AdditonalData["originalDocument"]["proof"]["verificationMethod"].ToString();
 
             var result = await base.CreateProofAsync(options);
 

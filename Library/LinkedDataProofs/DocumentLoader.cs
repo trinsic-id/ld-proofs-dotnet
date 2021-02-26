@@ -8,9 +8,9 @@ using W3C.CCG.SecurityVocabulary;
 
 namespace LinkedDataProofs
 {
-    public class CachingDocumentLoader : IDocumentLoader
+    public class CachingDocumentLoader : IDocumentLoader, ICloneable
     {
-        public static IDocumentLoader Default { get; set; } = new CachingDocumentLoader(Array.Empty<IDidDriver>())
+        public static IDocumentLoader Default { get; set; } = new CachingDocumentLoader()
             .AddCached(Constants.DID_V1_URL, Contexts.DidContextV1)
             .AddCached(Constants.SECURITY_CONTEXT_V1_URL, Contexts.SecurityContextV1)
             .AddCached(Constants.SECURITY_CONTEXT_V2_URL, Contexts.SecurityContextV2)
@@ -18,11 +18,15 @@ namespace LinkedDataProofs
 
 
         public Dictionary<string, RemoteDocument> Documents = new Dictionary<string, RemoteDocument>();
-        private readonly IEnumerable<IDidDriver> didDrivers;
+        private readonly IEnumerable<IDocumentProvider> documentProviders;
 
-        public CachingDocumentLoader(IEnumerable<IDidDriver> didDrivers)
+        public CachingDocumentLoader(IEnumerable<IDocumentProvider> documentProviders)
         {
-            this.didDrivers = didDrivers;
+            this.documentProviders = documentProviders;
+        }
+
+        public CachingDocumentLoader() : this(Array.Empty<IDocumentProvider>())
+        {
         }
 
         public IDocumentLoader AddCached(string uri, JObject document)
@@ -34,11 +38,11 @@ namespace LinkedDataProofs
 
         public RemoteDocument Load(Uri uri, JsonLdLoaderOptions options)
         {
-            foreach (var item in didDrivers)
+            foreach (var item in documentProviders)
             {
-                if (item.CanResolve(uri))
+                if (item.CanResolve(uri.ToString()))
                 {
-                    var didDocument = item.Resolve(uri);
+                    var didDocument = item.ResolveAsync(uri.ToString()).Result;
                     return new RemoteDocument { Document = didDocument };
                 }
             }
@@ -52,6 +56,11 @@ namespace LinkedDataProofs
         }
 
         public Task<JObject> LoadAsync(string documentUri)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object Clone()
         {
             throw new NotImplementedException();
         }

@@ -13,6 +13,11 @@ namespace W3C.CCG.AuthorizationCapabilities
         {
         }
 
+        public CapabilityDelegationProofPurpose(IEnumerable<string> capabilityChain) : base("capabilityDelegation")
+        {
+            CapabilityChain = capabilityChain;
+        }
+
         public IEnumerable<string> CapabilityChain { get; set; }
         public JToken VerifiedParentCapability { get; internal set; }
 

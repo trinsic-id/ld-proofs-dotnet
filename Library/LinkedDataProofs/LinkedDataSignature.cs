@@ -27,7 +27,7 @@ namespace LinkedDataProofs
         /// <summary>
         /// Gets or sets the verification method to use for this proof
         /// </summary>
-        public JToken VerificationMethod { get; set; }
+        public string VerificationMethod { get; set; }
 
         /// <summary>
         /// Gets or sets the 'created' date to use in this proof
