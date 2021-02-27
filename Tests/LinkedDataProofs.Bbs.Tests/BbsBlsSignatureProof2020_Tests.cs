@@ -73,7 +73,7 @@ namespace LinkedDataProofs.Bbs.Tests
                 Suite = new BbsBlsSignatureProof2020
                 {
                     RevealDocument = revealDocument,
-                    VerificationMethod = verificationMethod
+                    VerificationMethod = verificationMethod.Id
                 },
                 Purpose = new AssertionMethodPurpose()
             });
@@ -97,7 +97,7 @@ namespace LinkedDataProofs.Bbs.Tests
                 {
                     RevealDocument = revealDocument,
                     Nonce = new byte[] { 1, 2, 3 },
-                    VerificationMethod = verificationMethod
+                    VerificationMethod = verificationMethod.Id
                 },
                 Purpose = new AssertionMethodPurpose()
             });

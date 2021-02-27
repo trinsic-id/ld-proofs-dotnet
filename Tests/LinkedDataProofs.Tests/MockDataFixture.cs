@@ -32,7 +32,7 @@ namespace LinkedDataProfss.Tests
                 Delegator = "https://example.com/i/alice/keys/1"
             };
 
-            DocumentLoader = new CachingDocumentLoader(Array.Empty<IDidDriver>())
+            DocumentLoader = new CachingDocumentLoader()
                 .AddCached(Constants.DID_V1_URL, Contexts.DidContextV1)
                 .AddCached(Constants.SECURITY_CONTEXT_V1_URL, Contexts.SecurityContextV1)
                 .AddCached(Constants.SECURITY_CONTEXT_V2_URL, Contexts.SecurityContextV2)

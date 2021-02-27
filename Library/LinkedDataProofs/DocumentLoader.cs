@@ -18,14 +18,14 @@ namespace LinkedDataProofs
 
 
         public Dictionary<string, RemoteDocument> Documents = new Dictionary<string, RemoteDocument>();
-        private readonly IEnumerable<IDocumentProvider> documentProviders;
+        private readonly IEnumerable<IDocumentResolver> documentProviders;
 
-        public CachingDocumentLoader(IEnumerable<IDocumentProvider> documentProviders)
+        public CachingDocumentLoader(IEnumerable<IDocumentResolver> documentProviders)
         {
             this.documentProviders = documentProviders;
         }
 
-        public CachingDocumentLoader() : this(Array.Empty<IDocumentProvider>())
+        public CachingDocumentLoader() : this(Array.Empty<IDocumentResolver>())
         {
         }
 
