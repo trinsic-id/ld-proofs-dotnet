@@ -45,7 +45,12 @@ namespace LinkedDataProofs.Suites
             }
             if (input is ByteArray data)
             {
-                return Chaos.NaCl.Ed25519.Sign(data.Data, Multibase.Base58.Decode(PrivateKeyBase58));
+                var decoded = Multibase.Base58.Decode(PrivateKeyBase58);
+                if (decoded.Length == Chaos.NaCl.Ed25519.PrivateKeySeedSizeInBytes)
+                {
+                    Chaos.NaCl.Ed25519.KeyPairFromSeed(out var _, out decoded, decoded);
+                }
+                return Chaos.NaCl.Ed25519.Sign(data.Data, decoded);
             }
 
             throw new ArgumentException($"Invalid input type data. Expected '{typeof(ByteArray).Name}', found '{input?.GetType().Name}'");

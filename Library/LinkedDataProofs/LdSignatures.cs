@@ -7,6 +7,8 @@ using VDS.RDF.JsonLd;
 using LinkedDataProofs.Purposes;
 using W3C.CCG.SecurityVocabulary;
 using System.Diagnostics.CodeAnalysis;
+using W3C.CCG.DidCore;
+using System.Linq;
 
 namespace LinkedDataProofs
 {
@@ -112,5 +114,29 @@ namespace LinkedDataProofs
         /// <param name="document"></param>
         /// <returns></returns>
         public static bool HasProof(JToken document) => document["proof"].HasValues;
+
+        public static IEnumerable<VerificationMethod> FindVerificationMethods(DidDocument didDocument, string proofPurpose, IDocumentLoader documentLoader)
+        {
+            var processorOptions = new JsonLdProcessorOptions { DocumentLoader = documentLoader.Load };
+            processorOptions.ExpandContext = Constants.SECURITY_CONTEXT_V2_URL;
+
+            var result = JsonLdProcessor.Frame(
+                input: didDocument,
+                frame: new JObject
+                {
+                    { "@context", Constants.SECURITY_CONTEXT_V2_URL },
+                    { "@explicit", true },
+                    { proofPurpose, new JObject { { "@embed", "@always" } }
+                    }
+                },
+                options: processorOptions);
+
+            if (result[proofPurpose] == null || !(result[proofPurpose] is JArray purposes))
+            {
+                throw new Exception($"No verification keys found for prupose `{proofPurpose}`");
+            }
+
+            return purposes.Select(x => new VerificationMethod(x as JObject)).ToList();
+        }
     }
 }
