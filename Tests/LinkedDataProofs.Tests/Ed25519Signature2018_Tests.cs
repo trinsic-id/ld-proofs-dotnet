@@ -9,6 +9,7 @@ using W3C.CCG.SecurityVocabulary;
 using Newtonsoft.Json.Linq;
 using System.Linq;
 using W3C.CCG.AuthorizationCapabilities;
+using Newtonsoft.Json;
 
 namespace LinkedDataProfss.Tests
 {
@@ -116,6 +117,33 @@ namespace LinkedDataProfss.Tests
             });
 
             Assert.NotNull(result);
+        }
+
+        [Fact(DisplayName = "Sign sample document")]
+        public async Task SignSampleDocument()
+        {
+            // an example document to sign
+            var document = JObject.Parse(@"{
+                'id': 'Alice'
+            }");
+
+            // signer key
+            var key = Ed25519VerificationKey2018.Generate();
+
+            // create proof
+            var signedDocument = await LdSignatures.SignAsync(
+                document,
+                new ProofOptions
+                {
+                    Suite = new Ed25519Signature2018
+                    {
+                        Signer = key,
+                        VerificationMethod = key.Id
+                    },
+                    Purpose = new AssertionMethodPurpose()
+                });
+
+            Console.WriteLine(signedDocument.ToString(Formatting.Indented));
         }
     }
 }

@@ -92,12 +92,13 @@ namespace LinkedDataProofs.Suites
         /// Generate new random key
         /// </summary>
         /// <returns></returns>
-        public static Ed25519VerificationKey2018 Generate()
+        public static Ed25519VerificationKey2018 Generate(string id = "#key-1")
         {
             var edKey = Chaos.NaCl.Ed25519KeyPair.Generate();
 
             return new Ed25519VerificationKey2018
             {
+                Id = id,
                 PublicKeyBase58 = Multibase.Base58.Encode(edKey.PublicKey.Array),
                 PrivateKeyBase58 = Multibase.Base58.Encode(edKey.PrivateKey.Value.Array),
             };
