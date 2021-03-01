@@ -15,8 +15,68 @@
 
 ## Installation
 
-TODO
+Using Nuget, the following packages are available
+
+- LinkedDataProofs
+- LinkedDataProofs.Bbs
+- LinkedDataProofs.Zcaps
 
 ## Usage
 
-TODO
+To understand different use case, the best place is to explore the tests found under [Tests](Tests) directory.
+
+### Creating a proof
+
+To create new linked data proof, use the static methods in the `LdSignatures` class.
+
+```cs
+// an example document to sign
+var document = JObject.Parse(@"{
+    'id': 'Alice'
+}");
+
+// signer key
+var key = Ed25519VerificationKey2018.Generate();
+
+// create proof
+var signedDocument = await LdSignatures.SignAsync(
+    document,
+    new ProofOptions
+    {
+        Suite = new Ed25519Signature2018
+        {
+            Signer = key,
+            VerificationMethod = key.Id
+        },
+        Purpose = new AssertionMethodPurpose()
+    });
+```
+
+This will create a proof and return the fully signed document
+
+```json
+{
+  "id": "Alice",
+  "proof": {
+    "type": "Ed25519Signature2018",
+    "created": "2021-02-28T22:43:43",
+    "verificationMethod": "#key-1",
+    "proofPurpose": "assertionMethod",
+    "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..P8VSTUDCxaSHztIbFEGkwqn+KAbEQwGxvhNsqxgnCNJ/BnP7PDTJffHcielev2D7nRP9QK1wdXbkJvMmvumQCQ=="
+  }
+}
+```
+
+### Verifiying a proof
+
+To verify a proof, use the `LdSignatures.VerifyAsync` method with the input document and the required suite.
+
+```cs
+var verifyResult = await LdSignatures.VerifyAsync(
+    signedDocument,
+    new ProofOptions
+    {
+        Suite = new Ed25519Signature2018(),
+        Purpose = new AssertionMethodPurpose()
+    });
+```

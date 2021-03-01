@@ -1,0 +1,30 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Tests.Bbs",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/Tests/LinkedDataProofs.Bbs.Tests/bin/Debug/netcoreapp3.1/LinkedDataProofs.Bbs.Tests.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Tests/LinkedDataProofs.Bbs.Tests",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Debug Tests",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/Tests/LinkedDataProofs.Tests/bin/Debug/netcoreapp3.1/LinkedDataProofs.Tests.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Tests/LinkedDataProofs.Tests",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        }
+    ]
+}
