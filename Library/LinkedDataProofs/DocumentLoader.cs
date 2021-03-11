@@ -10,11 +10,7 @@ namespace LinkedDataProofs
 {
     public class CachingDocumentLoader : IDocumentLoader, ICloneable
     {
-        public static IDocumentLoader Default { get; set; } = new CachingDocumentLoader()
-            .AddCached(Constants.DID_V1_URL, Contexts.DidContextV1)
-            .AddCached(Constants.SECURITY_CONTEXT_V1_URL, Contexts.SecurityContextV1)
-            .AddCached(Constants.SECURITY_CONTEXT_V2_URL, Contexts.SecurityContextV2)
-            .AddCached(Constants.SECURITY_CONTEXT_V3_URL, Contexts.SecurityContextV3);
+        public static IDocumentLoader Default { get; set; } = new CachingDocumentLoader();
 
 
         public Dictionary<string, RemoteDocument> Documents = new Dictionary<string, RemoteDocument>();
@@ -23,6 +19,16 @@ namespace LinkedDataProofs
         public CachingDocumentLoader(IEnumerable<IDocumentResolver> documentProviders)
         {
             this.documentProviders = documentProviders;
+
+            AddDefaultCache();
+        }
+
+        private void AddDefaultCache()
+        {
+            AddCached(Constants.DID_V1_URL, Contexts.DidContextV1);
+            AddCached(Constants.SECURITY_CONTEXT_V1_URL, Contexts.SecurityContextV1);
+            AddCached(Constants.SECURITY_CONTEXT_V2_URL, Contexts.SecurityContextV2);
+            AddCached(Constants.SECURITY_CONTEXT_V3_URL, Contexts.SecurityContextV3);
         }
 
         public CachingDocumentLoader() : this(Array.Empty<IDocumentResolver>())
