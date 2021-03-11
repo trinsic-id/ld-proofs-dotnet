@@ -33,9 +33,6 @@ namespace LinkedDataProfss.Tests
             };
 
             DocumentLoader = new CachingDocumentLoader()
-                .AddCached(Constants.DID_V1_URL, Contexts.DidContextV1)
-                .AddCached(Constants.SECURITY_CONTEXT_V1_URL, Contexts.SecurityContextV1)
-                .AddCached(Constants.SECURITY_CONTEXT_V2_URL, Contexts.SecurityContextV2)
                 .AddCached(Alice_Keys.Id, Alice_Keys)
                 .AddCached((Alice_Keys.VerificationMethod.First() as VerificationMethod).Id, Alice_Keys)
                 .AddCached(Bob_Keys.Id, Bob_Keys)
