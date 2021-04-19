@@ -1,0 +1,4 @@
+[submodule "dotnetrdf"]
+	path = dotnetrdf
+	url = https://github.com/trinsic-id/dotnetrdf.git
+	branch = loader-fix
