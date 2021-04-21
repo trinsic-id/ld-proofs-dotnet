@@ -1,4 +1,4 @@
-﻿using BbsSignatures;
+using BbsSignatures;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -81,7 +81,7 @@ namespace LinkedDataProofs.Bbs
             }
             
             var allInputStatements = proofStatements.Concat(documentStatements);
-            
+
             return (StringArray)allInputStatements.ToArray();
         }
 

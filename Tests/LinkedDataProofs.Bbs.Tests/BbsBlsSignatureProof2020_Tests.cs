@@ -181,5 +181,42 @@ namespace LinkedDataProofs.Bbs.Tests
             Assert.NotNull(result);
             Assert.Equal("did:example:489398593", result.Controller);
         }
+
+        [Fact(DisplayName = "Sign, create proof and verify vaccination certificate")]
+        public async Task SignCreateProofAndVerifyVaccination()
+        {
+            var unsignedDocument = Utilities.LoadJson("Data/vaccination-certificate-unsigned.jsonld");
+            var verificationMethod = new Bls12381G2Key2020(Utilities.LoadJson("Data/did_example_489398593_test.json"));
+
+            var signedDocument = await LdSignatures.SignAsync(unsignedDocument, new ProofOptions
+            {
+                Suite = new BbsBlsSignature2020
+                {
+                    KeyPair = verificationMethod.ToBlsKeyPair(),
+                    VerificationMethod = "did:example:489398593#test"
+                },
+                Purpose = new AssertionMethodPurpose()
+            });
+
+            var revealDocument = Utilities.LoadJson("Data/vaccination-certificate-frame.jsonld");
+
+            var derivedDocument = await LdSignatures.SignAsync(signedDocument, new ProofOptions
+            {
+                Suite = new BbsBlsSignatureProof2020
+                {
+                    RevealDocument = revealDocument
+                },
+                Purpose = new AssertionMethodPurpose()
+            });
+
+            var result = await LdSignatures.VerifyAsync(derivedDocument, new ProofOptions
+            {
+                Suite = new BbsBlsSignatureProof2020(),
+                Purpose = new AssertionMethodPurpose()
+            });
+
+            Assert.NotNull(result);
+            Assert.Equal("did:example:489398593", result.Controller);
+        }
     }
 }

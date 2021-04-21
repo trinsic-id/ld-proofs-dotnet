@@ -76,6 +76,12 @@
     <Content Include="Data\test_partial_proof_document.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="**/*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\vaccination-certificate-unsigned.jsonld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Remove="Data\ldp-bbs2020.jsonld" />
@@ -87,6 +93,8 @@
     <None Remove="Data\test_partial_proof_nested_vc_document.json" />
     <None Remove="Data\test_proof_nested_vc_document.json" />
     <None Remove="Data\test_partial_proof_document.json" />
+    <None Remove="Data\vaccination-certificate-frame.jsonld" />
+    <None Remove="Data\vaccination-certificate-unsigned.jsonld" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Data\ldp-bbs2020.jsonld">

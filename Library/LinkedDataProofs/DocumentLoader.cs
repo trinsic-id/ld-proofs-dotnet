@@ -29,6 +29,7 @@ namespace LinkedDataProofs
             AddCached(Constants.SECURITY_CONTEXT_V1_URL, Contexts.SecurityContextV1);
             AddCached(Constants.SECURITY_CONTEXT_V2_URL, Contexts.SecurityContextV2);
             AddCached(Constants.SECURITY_CONTEXT_V3_URL, Contexts.SecurityContextV3);
+            AddCached(Constants.SECURITY_CONTEXT_BBS_V1_URL, Contexts.SecurityContextBbsV1);
         }
 
         public CachingDocumentLoader() : this(Array.Empty<IDocumentResolver>())

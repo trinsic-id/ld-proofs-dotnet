@@ -13,6 +13,8 @@ namespace W3C.CCG.SecurityVocabulary
 
         public static JObject SecurityContextV3 = LoadFromResource("LinkedDataProofs.SecurityVocabulary.Data.security-v3-unstable.jsonld");
 
+        public static JObject SecurityContextBbsV1 = LoadFromResource("LinkedDataProofs.SecurityVocabulary.Data.security-bbs-v1.jsonld");
+
         public static JObject DidContextV1 = LoadFromResource("LinkedDataProofs.SecurityVocabulary.Data.did-v1.jsonld");
 
         private static JObject LoadFromResource(string resourceName)
