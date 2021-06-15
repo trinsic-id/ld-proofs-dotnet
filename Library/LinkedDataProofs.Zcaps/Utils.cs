@@ -248,7 +248,7 @@ namespace W3C.CCG.AuthorizationCapabilities
             var rootCapability = isRoot ? capability : capabilityChain.First();
             capabilityChain = capabilityChain.Skip(1).ToArray();
 
-            rootCapability = await Utils.FetchInSecurityContextAsync(rootCapability, isRoot, null);
+            rootCapability = await Utils.FetchInSecurityContextAsync(rootCapability, isRoot);
 
             // 4.1. Check the expected target, if one was specified.
             if (purposeOptions.ExpectedTarget != null)
