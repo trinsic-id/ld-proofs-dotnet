@@ -50,13 +50,6 @@ namespace W3C.CCG.AuthorizationCapabilities
                 throw new Exception("Delegator not found for capability.");
             }
 
-            // if there's an invoker present and not a delegator, then this capability
-            // was intentionally meant to not be delegated
-            if (capability.Invoker != null && capability.Delegator is null)
-            {
-                return Array.Empty<string>();
-            }
-
             return new[] { capability.Delegator ?? capability.Id };
         }
 
@@ -90,13 +83,6 @@ namespace W3C.CCG.AuthorizationCapabilities
             if (capability.Invoker is null || capability.Id is null)
             {
                 throw new Exception("Delegator not found for capability.");
-            }
-
-            // if there's a delegator present and not an invoker, then this capability
-            // was intentionally meant to not be invoked
-            if (capability.Delegator != null && capability.Invoker is null)
-            {
-                return Array.Empty<string>();
             }
 
             return new[] { capability.Invoker ?? capability.Id };

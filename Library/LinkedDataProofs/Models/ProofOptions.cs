@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using VDS.RDF.JsonLd;
 using LinkedDataProofs.Purposes;

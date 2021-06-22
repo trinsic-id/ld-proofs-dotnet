@@ -24,8 +24,7 @@ namespace Chaos.NaCl
             return publicKey;
         }
 
-        static readonly byte[] _basePoint = new byte[32]
-		{
+        static readonly byte[] _basePoint = {
 			9, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0 ,0, 0, 0, 0, 0,
 			0, 0, 0 ,0, 0, 0, 0, 0,
